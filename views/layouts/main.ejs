@@ -1,0 +1,190 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+	<!-- Required meta tags -->
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<!--favicon-->
+	<link rel="icon" href="../../public/assets/images/favicon-32x32.png" type="image/png" />
+	<!--plugins-->
+	<link href="../../public/assets/plugins/simplebar/css/simplebar.css" rel="stylesheet" />
+	<link href="../../public/assets/plugins/perfect-scrollbar/css/perfect-scrollbar.css" rel="stylesheet" />
+	<link href="../../public/assets/plugins/metismenu/css/metisMenu.min.css" rel="stylesheet" />
+	<link href="../../public/assets/plugins/datatable/css/dataTables.bootstrap5.min.css" rel="stylesheet" />
+	<!-- loader-->
+	<link href="../../public/assets/css/pace.min.css" rel="stylesheet" />
+	<script src="../../public/assets/js/pace.min.js"></script>
+	<!-- Bootstrap CSS -->
+	<link href="../../public/assets/css/bootstrap.min.css" rel="stylesheet">
+	<link href="../../public/assets/css/bootstrap-extended.css" rel="stylesheet">
+	<link href="../../public/assets/css/app.css" rel="stylesheet">
+	<link href="../../public/assets/css/icons.css" rel="stylesheet">
+	<!-- Theme Style CSS -->
+	<link rel="stylesheet" href="../../public/assets/css/dark-theme.css" />
+	<link rel="stylesheet" href="../../public/assets/css/semi-dark.css" />
+	<link rel="stylesheet" href="../../public/assets/css/header-colors.css" />
+	<title>Syndron - Bootstrap5 Admin Template</title>
+
+	<!-- Bootstrap JS -->
+	<script src="../../public/assets/js/bootstrap.bundle.min.js"></script>
+	<!--plugins-->
+	<script src="../../public/assets/js/jquery.min.js"></script>
+	<script src="../../public/assets/plugins/simplebar/js/simplebar.min.js"></script>
+	<script src="../../public/assets/plugins/metismenu/js/metisMenu.min.js"></script>
+	<script src="../../public/assets/plugins/perfect-scrollbar/js/perfect-scrollbar.js"></script>
+	<script src="../../public/assets/plugins/apexcharts-bundle/js/apexcharts.min.js"></script>
+	<script src="../../public/assets/plugins/datatable/js/jquery.dataTables.min.js"></script>
+	<script src="../../public/assets/plugins/datatable/js/dataTables.bootstrap5.min.js"></script>
+	<script type="text/javascript" src="https://maps.googleapis.com/maps/api/js?key=AIzaSyDH9nP0KFFro41ufDHWLSTAHp9Rxa__ofc&libraries=places&callback=Function.prototype"></script>
+	<script src="../node_modules/location-picker/dist/location-picker.min.js"></script>
+	<!--app JS-->
+	<script src="../../public/assets/js/app.js"></script>
+	<script>
+		let success_timeout;
+		let warning_timeout;
+		let error_timeout;
+		
+
+		
+
+		
+	
+		function showNotification(style,Message,time_ms = 5000){
+			
+			
+			let alert;
+	
+			switch ( style.toLowerCase() ) {
+				
+				case 'success':
+					alert = $(".notificacion_success")[0];
+					if($(alert).is(":visible")){
+						clearTimeout(notificationTimeOut);
+					}
+					$(alert).find(".message").text(Message);
+					$(alert).show("fade");
+					success_timeout = setTimeout(() => {
+						$(alert).hide("fade");
+					}, time_ms);
+					break;
+				case 'warning':
+					/*icon = $(alert).find(".icon-alert");
+					icon.text("warning");
+					icon.css("color","#ff9500");*/
+					break;
+				case 'error':
+					/*icon = $(alert).find(".icon-alert");
+					icon.text("close");
+					icon.css("color","#ff4857");*/
+					break;
+				default:
+					console.log('style no reconocido. Los argumentos validos son "success", "warning" , "error"');
+					break;
+			}
+			
+		};
+	</script>
+</head>
+
+<style>
+	.btn:focus {
+		outline: none;
+		box-shadow: none;
+	}
+
+	/*css notification*/
+	.notificacion_alert{
+		position: fixed;
+		top: 70px;
+		right: 30px;
+		z-index: 999;
+	}
+
+	/*css notification*/
+
+	#map {
+      width: 100%;
+      height: 320px;
+    }
+
+	.mainCard{
+		height: 30.1%;
+		width: 100%;
+		display: flex;
+		align-items: center;
+		justify-content: center;
+	}
+
+	.secondaryCard{
+		height: 47%;
+		width: 100%;
+		display: flex;
+		align-items: center;
+		justify-content: center;
+	}
+
+	.btn-blueCustom{
+		background: #B6EFFA;
+	}
+
+	.btn-greenCustom{
+		background: #B8E2B6;
+	}
+
+	.mainCardWhatsapp{
+		background: #FBB3BA;
+	}
+
+	.mainTableChats{
+		min-height: 750px;
+	}
+
+</style>
+
+<body>
+	<!--wrapper-->
+	<div class="wrapper">
+		<!--start header -->
+		<header>
+			<div class="topbar d-flex align-items-center">
+				<nav class="navbar navbar-expand justify-content-between">
+					<div class="topbar-logo-header">
+						<div class="">
+							<img src="../../public/assets/images/logo-icon.png" class="logo-icon" alt="logo icon">
+						</div>
+						<div class="">
+							<h4 class="logo-text">Syndron</h4>
+						</div>
+					</div>
+				</nav>
+			</div>
+			<!--start notification-->
+			<div style="display: none;" class="notificacion_alert alert alert-success border-0 bg-success alert-dismissible fade show py-0 notificacion_success" bis_skin_checked="1">
+				<div class="d-flex align-items-center gap-2" bis_skin_checked="1">
+					<div class="font-30 text-white" bis_skin_checked="1"><i class="bx bxs-check-circle"></i>
+					</div>
+					<div class="text-white message" bis_skin_checked="1"></div>
+				</div>
+			</div>
+			<!--end notification-->
+		</header>
+		<!--start page wrapper -->
+		<%- body %>
+		<!--end page wrapper -->
+		<!--start overlay-->
+		<div class="overlay toggle-icon"></div>
+		<!--end overlay-->
+		<!--Start Back To Top Button--> <a href="javaScript:;" class="back-to-top"><i class='bx bxs-up-arrow-alt'></i></a>
+		<!--End Back To Top Button-->
+		<footer class="page-footer d-flex justify-content-between">
+			<p class="mb-0">Copyright © 2021. All right reserved.</p>
+			
+		</footer>
+	</div>
+	<!--end wrapper-->
+</body>
+
+
+</html>
+
