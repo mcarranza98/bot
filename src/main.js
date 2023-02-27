@@ -104,7 +104,7 @@ const createWhatsappView = async(window, browser) => {
 
     const post = await getImage('ratemypoo');
 
-    const media = await MessageMedia.fromUrl(post);
+    const media = await MessageMedia.fromUrl(post); 
 
     await window.webContents.session.clearStorageData();
     await window.webContents.session.clearCache();
