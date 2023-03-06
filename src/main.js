@@ -98,13 +98,11 @@ const createApp = async () => {
    
 };
 
+
+
 const createWhatsappView = async(window, browser) => {
 
     const view = new BrowserView();
-
-    const post = await getImage('ratemypoo');
-
-    const media = await MessageMedia.fromUrl(post); 
 
     await window.webContents.session.clearStorageData();
     await window.webContents.session.clearCache();
@@ -117,19 +115,55 @@ const createWhatsappView = async(window, browser) => {
 
     });
 
-    client.on('message', msg => {
+    client.on('message', async msg => {
+
+        const db = new Database(path.join(__dirname, '..' , 'database' , 'clients.db'));
+
+        const query = db.prepare('SELECT * FROM clients WHERE phone = ?');
+        let clientInfo = query.get(msg.from);
+
+        if( clientInfo == undefined ){
+
+            clientInfo = [];
+
+            registerPhone( msg );
+
+            clientInfo.step = 1;
+
+        } 
+        
+        const currentQuestion = nextQuestion( clientInfo.step );
+
+        console.log({currentQuestion});
+        console.log(currentQuestion.fourthAnswer);
+
+        let respTres =  currentQuestion.thirdAnswer == '' ? '' : `\n➌ ${currentQuestion.thirdAnswer}`;
+        let respCuatro = currentQuestion.fourthAnswer == '' ? '' : `\n➍ ${currentQuestion.fourthAnswer}`;
+
+        let msgToSend = `${currentQuestion.question}\n➊ ${currentQuestion.firstAnswer} \n➋ ${currentQuestion.secondAnswer}${respTres}${respCuatro}`;
+        
+        
+
+
+      
+        db.pragma('journal_mode = WAL');
 
         if(msg.from == "status@broadcast" || msg.from.length > 18) return;
 
-        if (msg.from == "5218712662748@c.us" || msg.from == "5218717978267@c.us"  || msg.from == "5218713427215@c.us" ){
+        if (msg.from == "5218712662748@c.us" || msg.from == "5218717978267@c.us" ){
 
-            console.log( {post} );
+            
+            
+            client.sendMessage(msg.from, msgToSend);
 
+            command = db.prepare(`UPDATE clients
+                                          SET step = ?
 
-            client.sendMessage(msg.from, media);
+                                          WHERE
+                                            phone = ? `);
+        
+            command.run(  clientInfo.step + 1, msg.from );
 
-            db_conversaciones.close();
-            db_main.close();
 
         }
 
@@ -138,6 +172,66 @@ const createWhatsappView = async(window, browser) => {
     client.initialize();
 
     return { view : view, client: client };
+
+}
+
+function searchIndexByField(array, field, value) {
+    for (let i = 0; i < array.length; i++) {
+      if (array[i][field] === value) {
+        return i;
+      }
+    }
+    return -1; // return -1 if the value is not found in the array
+  }
+
+function nextQuestion( step ){
+
+    const db = new Database(path.join(__dirname, '..' , 'database' , 'questions.db'));
+
+    const query = db.prepare('SELECT * FROM questionnaire');
+    const preguntas = query.all();
+
+    const indexPregunta = searchIndexByField(preguntas, 'sequence', step );
+
+    console.log({preguntas});
+    console.log({step});
+    console.log({indexPregunta});
+
+    return preguntas[indexPregunta] ;
+
+}
+
+
+function registerPhone( msg ){
+
+    const{ from } = msg;
+
+    const uuid = uuidv4();
+  
+    const db = new Database(path.join(__dirname, '..' , 'database' , 'clients.db'));
+  
+    db.pragma('journal_mode = WAL');
+  
+    const command = `INSERT INTO clients(id, phone, step) 
+                    VALUES(@id, @phone, @step)`;
+                            
+    const insert = db.prepare(command);
+    
+    const insertbasics = db.transaction((config) => {
+        
+        insert.run(config);
+
+    });
+
+    const basics = {
+        id: uuid,
+        phone: from,
+        step: 1
+    };
+    
+    insertbasics(basics);
+
+    db.close();
 
 }
 

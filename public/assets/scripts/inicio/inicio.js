@@ -6,24 +6,7 @@ const action_icons = `<div class="d-flex order-actions" bis_skin_checked="1">
 $('#productos-table').DataTable({
     "initComplete": function(settings, json) {
 
-        load_producto_table();
-
-        $("#productos-table").on('change',"input[type='checkbox']",function(e){
-
-            const state = $(this).is(":checked");
-            let state_text = "";
-
-            if(state){
-                state_text = "true";
-            }else{
-                state_text = "false";
-            }
-
-            const tr = $(this).closest("tr");
-            const data = $("#productos-table").DataTable().row(tr).data();
-            updateState("productos", data.id, state_text);
-
-        });
+        //load_producto_table();
 
     },
     "oLanguage": {
@@ -47,26 +30,11 @@ $('#productos-table').DataTable({
 
 });
 
-$('#variacion-table').DataTable({
+$('#questions-table').DataTable({
     "initComplete": function(settings, json) {
-        load_variaciones_table();
 
-        $("#variacion-table").on('change',"input[type='checkbox']",function(e){
+        load_questions_table();
 
-            const state = $(this).is(":checked");
-            let state_text = "";
-
-            if(state){
-                state_text = "true";
-            }else{
-                state_text = "false";
-            }
-
-            const tr = $(this).closest("tr");
-            const data = $("#variacion-table").DataTable().row(tr).data();
-            updateState("variaciones", data.id, state_text);
-
-        });
     },
     "oLanguage": {
             "sUrl": "../../../public/assets/datatable/spanish-datatable.json"
@@ -74,11 +42,9 @@ $('#variacion-table').DataTable({
     dom: 'lrt',
     columns: [
 
-        { data: 'descripcion', title: 'Descripción'},
-        { data: 'precio_extra', title: 'Precio extra', orderable: false, width: '80px'  },
-        { data: 'estado_checkbox', title: 'Disponibilidad', orderable: false, width: '110px'},
-        { title: 'Opciones', class: 'details-control', orderable: false, data: null, defaultContent: action_icons, width: '50px' }
-
+        { data: 'sequence', title: 'Orden', width: '80px'},
+        { data: 'question', title: 'Pregunta', orderable: false},
+        { data: 'answerQuantity', title: 'Respuestas', orderable: false, width: '80px'  }
     ],
     autoWidth: false,
     info: false,
@@ -95,16 +61,46 @@ $("#basic_messages_form").submit(function(e) {
     const $form = $(this);
     const data = getFormData($form);
     console.log( data );
-    /*$.ajax({
-        url: "/upload_producto",
+    
+    $.ajax({
+        url: "/upload_basics",
         type: "POST",
         data: data,
         success: function(data){
             
-            
+            if(data.state == "success"){
+                showNotification("success", data.message);
+                $("#basic_messages").modal("hide");
+            }
             
         }
-    });*/
+    });
+
+});
+
+
+$("#add_question_form").submit(function(e) {
+    e.preventDefault();
+    const $form = $(this);
+    const data = getFormData($form);
+
+    console.log( data );
+
+    $.ajax({
+        url: "/upload_question",
+        type: "POST",
+        data: data,
+        success: function(data){
+            
+            if(data.state == "success"){
+                showNotification("success", data.message);
+                $("#add_question").modal("hide");
+                load_questions_table();
+            }
+            
+        }
+    });
+
 });
 
 
@@ -223,26 +219,6 @@ $("#settings_form").submit(async function(e) {
     
 });
 
-$("#nueva_variacion_form").submit(function(e) {
-    e.preventDefault();
-    const $form = $(this);
-    const data = getFormData($form);
-    $.ajax({
-        url: "/upload_variacion",
-        type: "POST",
-        data: data,
-        success: function(data){
-            
-            if(data.state == "success"){
-                $('#variacion-table').DataTable().clear().draw();
-                showNotification("success", data.message);
-                $("#nueva_variacion").modal("hide");
-                load_variaciones_table();
-            }
-            
-        }
-    });
-});
 
 function load_producto_table(){
     $.ajax({
@@ -256,33 +232,15 @@ function load_producto_table(){
     });
 }
 
-function load_variaciones_table(){
+function load_questions_table(){
     $.ajax({
-        url: "/load_variaciones_table",
+        url: "/load_questions_table",
         type: "GET",
         success: function(data){
-            
-            $('#variacion-table').DataTable().rows.add( data.rows ).draw();
 
-            $('#left_variaciones_column').empty();
-            $('#right_variaciones_column').empty();
-            data.rows.forEach((variacion,index) => {
 
-                const checkbox = `<div class="form-check form-switch" bis_skin_checked="1">
-                                    <input name="${variacion.id}" class="form-check-input" type="checkbox" id="${variacion.id}">
-                                    <label class="form-check-label" for="${variacion.id}">${variacion.descripcion}</label>
-                                </div>`;
-
-                if(index % 2 == 0){
-
-                    $('#left_variaciones_column').append(checkbox);
-
-                }else{
-
-                    $('#right_variaciones_column').append(checkbox);
-
-                }
-            });
+            $('#questions-table').DataTable().clear().draw();
+            $('#questions-table').DataTable().rows.add( data.rows ).draw();
 
         }
     });

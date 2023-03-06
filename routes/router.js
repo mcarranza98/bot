@@ -15,72 +15,26 @@ router.get('/', function(req, res, next) {
 
 });
 
-router.get('/load_producto_table', function(req, res, next) {
+router.get('/load_questions_table', function(req, res, next) {
 
-/*
-  const db = new Database(path.join(__dirname, '..' , 'database' , 'main.db'));
+
+  const db = new Database(path.join(__dirname, '..' , 'database' , 'questions.db'));
 
   db.pragma('journal_mode = WAL');
 
-  const command = db.prepare('SELECT * FROM productos');
-  const productos = command.all();
+  const command = db.prepare('SELECT * FROM questionnaire');
+  const questions = command.all();
 
-  let final_products = [];
+  let final_question = [];
 
-  productos.forEach(producto => {
-    let checkbox = "";
+  questions.forEach(producto => {
 
-    if (producto.estado === 'true'){
-      checkbox = `<div class="form-check form-switch" bis_skin_checked="1">
-                          <input class="form-check-input" type="checkbox" checked>
-                        </div>`;
-    }else{
-      checkbox = `<div class="form-check form-switch" bis_skin_checked="1">
-                          <input class="form-check-input" type="checkbox">
-                        </div>`;
-    }
-
-    producto.estado_checkbox = checkbox;
-    final_products.push({...producto});
+    final_question.push({...producto});
 
   });
 
   db.close();
-  res.send({ rows: final_products });*/
-
-});
-
-router.get('/load_variaciones_table', function(req, res, next) {
-/*
-  const db = new Database(path.join(__dirname, '..' , 'database' , 'main.db'));
-
-  db.pragma('journal_mode = WAL');
-
-  const command = db.prepare('SELECT * FROM variaciones');
-  const variaciones = command.all();
-
-  let final_variaciones = [];
-
-  variaciones.forEach(variacion => {
-    let checkbox = "";
-
-    if (variacion.estado === 'true'){
-      checkbox = `<div class="form-check form-switch" bis_skin_checked="1">
-                          <input class="form-check-input" type="checkbox" checked>
-                        </div>`;
-    }else{
-      checkbox = `<div class="form-check form-switch" bis_skin_checked="1">
-                          <input class="form-check-input" type="checkbox">
-                        </div>`;
-    }
-
-    variacion.estado_checkbox = checkbox;
-    final_variaciones.push({...variacion});
-
-  });
-
-  db.close();
-  res.send({ rows: final_variaciones });*/
+  res.send({ rows: final_question });
 
 });
 
@@ -143,96 +97,122 @@ router.get('/load_settings', async function (req, res, next) {
 
 });
 
-router.post('/upload_producto', function(req, res, next) {
+router.post('/upload_basics', function(req, res, next) {
 
-  const data = req.body;
+  const{ firstMessage, lastMessage, wrongAnswer } = req.body;
 
-  const{ productName, productPrice } = data;
+  const uuid = uuidv4();
 
-  let variaciones = "";
+  const db = new Database(path.join(__dirname, '..' , 'database' , 'questions.db'));
 
-  for(let key in data){
+  const query = db.prepare('SELECT * FROM basics');
+  const registro = query.all();
 
+  db.pragma('journal_mode = WAL');
+ 
+  if( registro.length == 0 ){
 
-    const uuidChecker = /^[0-9a-fA-F]{8}\b-[0-9a-fA-F]{4}\b-[0-9a-fA-F]{4}\b-[0-9a-fA-F]{4}\b-[0-9a-fA-F]{12}$/gi;
+      const command = `INSERT INTO basics(id, firstMessage, lastMessage, wrongAnswer) 
+                    VALUES(@id, @firstMessage, @lastMessage, @wrongAnswer)`;
+                              
+      const insert = db.prepare(command);
+      
+      const insertbasics = db.transaction((config) => {
+        
+        insert.run(config);
 
-    if(uuidChecker.test(key)){
+        res.send({state: "success" , message : "Respuestas actualizada exitosamente."});
 
-      variaciones += `${key},`;
+      });
 
-    }
+      const basics = {
+        id: 1,
+        firstMessage: firstMessage,
+        lastMessage: lastMessage,
+        wrongAnswer : wrongAnswer
+      };
+      
+      insertbasics(basics);
+
+      db.close();
+
+  }else{
+
+    command = db.prepare(`UPDATE settings
+                                          SET id = 1,
+                                              firstMessage = ?,
+                                              lastMessage = ?,
+                                              wrongAnswer = ?
+
+                                          WHERE
+                                              id = 1 `);
+    
+    command.run( firstMessage , lastMessage, wrongAnswer );
+
+    res.send({state: "success" , message : "Respuestas actualizada exitosamente."});
+
+    db.close();
+
+  }
+  
+});
+
+router.post('/upload_question', function(req, res, next) {
+
+  const{ question, firstAnswer, secondAnswer, thirdAnswer, fourthAnswer } = req.body;
+
+  const uuid = uuidv4();
+
+  const db = new Database(path.join(__dirname, '..' , 'database' , 'questions.db'));
+
+  const query = db.prepare('SELECT * FROM questionnaire');
+  const registro = query.all();
+
+  const sequence = registro.length + 1;
+  let answerQuantity;
+
+  if( fourthAnswer ){
+
+      answerQuantity = 4;
+
+  }else{
+
+    answerQuantity = 3;
 
   }
 
-  variaciones = variaciones != "" ? variaciones : null;
-
-  const uuid = uuidv4();
-
-  const db = new Database(path.join(__dirname, '..' , 'database' , 'main.db'));
-
   db.pragma('journal_mode = WAL');
+ 
 
-  const command = `INSERT INTO productos(id, descripcion, precio, variaciones, estado) 
-                  VALUES(@uuid, @productName, @productPrice, @variaciones, @estado)`;
-                            
-  const insert = db.prepare(command);
+      const command = `INSERT INTO questionnaire(id, sequence, question, firstAnswer, secondAnswer, thirdAnswer, fourthAnswer, answerQuantity) 
+                    VALUES(@id, @sequence, @question, @firstAnswer, @secondAnswer, @thirdAnswer, @fourthAnswer, @answerQuantity)`;
+                              
+      const insert = db.prepare(command);
+      
+      const insertQuestion = db.transaction((config) => {
+        
+        insert.run(config);
+
+        res.send({state: "success" , message : "Pregunta agregada exitosamente."});
+
+      });
+
+      const settings = {
+        id: uuid,
+        sequence: sequence,
+        question: question,
+        firstAnswer: firstAnswer,
+        secondAnswer : secondAnswer,
+        thirdAnswer: thirdAnswer,
+        fourthAnswer: fourthAnswer,
+        answerQuantity: answerQuantity
+      };
+      
+      insertQuestion(settings);
+
+      db.close();
+
   
-  const insertProduct = db.transaction((product) => {
-    
-    insert.run(product);
-
-    res.send({state: "success" , message : "Producto agregado exitosamente."});
-
-  });
-
-  const product = {
-    uuid: uuid,
-    productName: productName,
-    productPrice : productPrice,
-    variaciones : variaciones,
-    estado: "false"
-  };
-  
-  insertProduct(product);
-
-  db.close();
-
-});
-
-router.post('/upload_variacion', function(req, res, next) {
-
-  const{ variacionName, variacionPrice } = req.body;
-  
-  const uuid = uuidv4();
-
-  const db = new Database(path.join(__dirname, '..' , 'database' , 'main.db'));
-
-  db.pragma('journal_mode = WAL');
-
-  const command = `INSERT INTO variaciones(id, descripcion, precio_extra, estado) 
-                  VALUES(@uuid, @variacionName, @variacionPrice, @estado)`;
-                            
-  const insert = db.prepare(command);
-  
-  const insertVariacion = db.transaction((product) => {
-    
-    insert.run(product);
-
-    res.send({state: "success" , message : "Variación agregado exitosamente."});
-
-  });
-
-  const variacion = {
-    uuid: uuid,
-    variacionName: variacionName,
-    variacionPrice : variacionPrice,
-    estado: "false"
-  };
-  
-  insertVariacion(variacion);
-
-  db.close();
-
 });
 
 
@@ -298,28 +278,6 @@ router.post('/upload_settings', function(req, res, next) {
   
 });
 
-router.post('/update_state', function(req, res, next) {
-
-  const data = req.body;
-
-  const{ table, id, state } = data;
-
-  const db = new Database(path.join(__dirname, '..' , 'database' , 'main.db'));
-
-  db.pragma('journal_mode = WAL');
-
-  const command = `UPDATE ${table}
-                  SET estado = ?
-                  WHERE id = ?`;
-    
-                            
-  const prepare = db.prepare(command);
-  
-  const info = prepare.run(state, id);
-
-  db.close();
-
-});
 
 
 module.exports = {routes: router}

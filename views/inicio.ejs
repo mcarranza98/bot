@@ -40,26 +40,22 @@
 							<div class="col-xl-8 d-flex mainTableChats">
 								<div class="card radius-10 w-100">
 									<div class="card-body">
-										<div class="d-flex align-items-center">
+										<div class="d-flex align-items-center  pb-3">
 											<div>
-												<h5 class="mb-1">Chats</h5>
+												<h5 class="mb-1">Encuentas completadas</h5>
 											</div>
 										</div>
-										<div class="table-responsive mt-4">
-											<div id="Transaction-History_wrapper" class="dataTables_wrapper dt-bootstrap5 no-footer"><div class="row"><div class="col-sm-12 col-md-6"><div class="dataTables_length" id="Transaction-History_length"><label>Show <select name="Transaction-History_length" aria-controls="Transaction-History" class="form-select form-select-sm"><option value="6">6</option><option value="10">10</option><option value="20">20</option><option value="-1">Todos</option></select> entries</label></div></div><div class="col-sm-12 col-md-6"><div id="Transaction-History_filter" class="dataTables_filter"><label>Search:<input type="search" class="form-control form-control-sm" placeholder="" aria-controls="Transaction-History"></label></div></div></div><div class="row"><div class="col-sm-12"><table class="table align-middle mb-0 table-hover dataTable no-footer" id="Transaction-History" role="grid" aria-describedby="Transaction-History_info">
-												<thead class="table-light">
-													<tr role="row"><th class="sorting_asc" tabindex="0" aria-controls="Transaction-History" rowspan="1" colspan="1" aria-sort="ascending" aria-label="Payment Name: activate to sort column descending" style="width: 466.938px;">Payment Name</th><th class="sorting" tabindex="0" aria-controls="Transaction-History" rowspan="1" colspan="1" aria-label="Date &amp;amp; Time: activate to sort column ascending" style="width: 185.219px;">Date &amp; Time</th><th class="sorting" tabindex="0" aria-controls="Transaction-History" rowspan="1" colspan="1" aria-label="Amount: activate to sort column ascending" style="width: 130.781px;">Amount</th><th class="sorting" tabindex="0" aria-controls="Transaction-History" rowspan="1" colspan="1" aria-label="Status: activate to sort column ascending" style="width: 129.047px;">Status</th></tr>
-												</thead>
-												<tbody>
-												</tbody>
-											</table></div></div><div class="row"><div class="col-sm-12 col-md-5"><div class="dataTables_info" id="Transaction-History_info" role="status" aria-live="polite">Showing 1 to 6 of 12 entries</div></div><div class="col-sm-12 col-md-7"><div class="dataTables_paginate paging_simple_numbers" id="Transaction-History_paginate"><ul class="pagination"><li class="paginate_button page-item previous disabled" id="Transaction-History_previous"><a href="#" aria-controls="Transaction-History" data-dt-idx="0" tabindex="0" class="page-link">Prev</a></li><li class="paginate_button page-item active"><a href="#" aria-controls="Transaction-History" data-dt-idx="1" tabindex="0" class="page-link">1</a></li><li class="paginate_button page-item "><a href="#" aria-controls="Transaction-History" data-dt-idx="2" tabindex="0" class="page-link">2</a></li><li class="paginate_button page-item next" id="Transaction-History_next"><a href="#" aria-controls="Transaction-History" data-dt-idx="3" tabindex="0" class="page-link">Next</a></li></ul></div></div></div></div>
+										<div class="table-responsive">
+											<table id="productos-table" class="table align-middle mb-0 w-100">
+												<thead class="table-light"></thead>
+											</table>
 										</div>
 									</div>
 								</div>
 							</div>
 							<div class="col-xl-4">
-								<button type="button" class="btn card radius-10 mainCard "><i class='bx bxs-chat' ></i></button>
-								<button type="button"  data-bs-toggle="modal" data-bs-target="#settings" class="btn card radius-10 mainCard"><i class='bx bx-cog'></i></button>
+								<button type="button" class="btn btn-yellowCustom card radius-10 mainCard "><i class='bx bxs-chat' ></i></button>
+								<button type="button"  data-bs-toggle="modal" data-bs-target="#settings" class="btn btn-blueCustom card radius-10 mainCard"><i class='bx bx-cog'></i></button>
 								<button id="whatsapp-btn" type="button" class="btn card radius-10 mainCard mainCardWhatsapp"><i class='bx bxl-whatsapp'></i></button>
 							</div>
 						</div>
@@ -67,50 +63,7 @@
 					</div>
 				</div>
 			</div>
-			<div class="tab-pane fade" id="menu" role="tabpanel" bis_skin_checked="1">
-				<div class="row">
-					<div class="col-md-6">
-						<div class="card radius-10">
-							<div class="card-body">
-								<div class="d-flex align-items-center">
-									<div>
-										<h5 class="mb-0">Productos</h5>
-									</div>
-									<div class="font-22 ms-auto">
-										<button type="button" class="btn btn-primary px-3" data-bs-toggle="modal" data-bs-target="#nuevo_producto">Nuevo producto</button>
-									</div>
-								</div>
-								<hr/>
-								<div class="table-responsive">
-									<table id="productos-table" class="table align-middle mb-0 w-100">
-										<thead class="table-light"></thead>
-									</table>
-								</div>
-							</div>
-						</div>
-					</div>
-					<div class="col-md-6">
-						<div class="card radius-10">
-							<div class="card-body">
-								<div class="d-flex align-items-center">
-									<div>
-										<h5 class="mb-0">Variaciones</h5>
-									</div>
-									<div class="font-22 ms-auto">
-										<button type="button" class="btn btn-primary px-3" data-bs-toggle="modal" data-bs-target="#nueva_variacion">Nueva variación</button>
-									</div>
-								</div>
-								<hr/>
-								<div class="table-responsive">
-									<table id="variacion-table" class="table align-middle mb-0 w-100">
-										<thead class="table-light"></thead>
-									</table>
-								</div>
-							</div>
-						</div>
-					</div>
-				</div>
-			</div>
+
 			<div class="tab-pane fade" id="Cuestionario" role="tabpanel" bis_skin_checked="1">
 				<div class="card radius-10">
 					<div class="card-body">
@@ -119,19 +72,18 @@
 							<div class="col-xl-8 d-flex mainTableChats">
 								<div class="card radius-10 w-100">
 									<div class="card-body">
-										<div class="d-flex align-items-center">
+										<div class="d-flex align-items-center justify-content-between pb-3">
 											<div>
-												<h5 class="mb-1">Chats</h5>
+												<h5 class="mb-1">Preguntas</h5>
+											</div>
+											<div>
+												<button type="button"  data-bs-toggle="modal" data-bs-target="#add_question"  class="btn btn-primary px-5"><i class="bx bx-plus mr-1"></i>Añadir</button>
 											</div>
 										</div>
-										<div class="table-responsive mt-4">
-											<div id="Transaction-History_wrapper" class="dataTables_wrapper dt-bootstrap5 no-footer"><div class="row"><div class="col-sm-12 col-md-6"><div class="dataTables_length" id="Transaction-History_length"><label>Show <select name="Transaction-History_length" aria-controls="Transaction-History" class="form-select form-select-sm"><option value="6">6</option><option value="10">10</option><option value="20">20</option><option value="-1">Todos</option></select> entries</label></div></div><div class="col-sm-12 col-md-6"><div id="Transaction-History_filter" class="dataTables_filter"><label>Search:<input type="search" class="form-control form-control-sm" placeholder="" aria-controls="Transaction-History"></label></div></div></div><div class="row"><div class="col-sm-12"><table class="table align-middle mb-0 table-hover dataTable no-footer" id="Transaction-History" role="grid" aria-describedby="Transaction-History_info">
-												<thead class="table-light">
-													<tr role="row"><th class="sorting_asc" tabindex="0" aria-controls="Transaction-History" rowspan="1" colspan="1" aria-sort="ascending" aria-label="Payment Name: activate to sort column descending" style="width: 466.938px;">Payment Name</th><th class="sorting" tabindex="0" aria-controls="Transaction-History" rowspan="1" colspan="1" aria-label="Date &amp;amp; Time: activate to sort column ascending" style="width: 185.219px;">Date &amp; Time</th><th class="sorting" tabindex="0" aria-controls="Transaction-History" rowspan="1" colspan="1" aria-label="Amount: activate to sort column ascending" style="width: 130.781px;">Amount</th><th class="sorting" tabindex="0" aria-controls="Transaction-History" rowspan="1" colspan="1" aria-label="Status: activate to sort column ascending" style="width: 129.047px;">Status</th></tr>
-												</thead>
-												<tbody>
-												</tbody>
-											</table></div></div><div class="row"><div class="col-sm-12 col-md-5"><div class="dataTables_info" id="Transaction-History_info" role="status" aria-live="polite">Showing 1 to 6 of 12 entries</div></div><div class="col-sm-12 col-md-7"><div class="dataTables_paginate paging_simple_numbers" id="Transaction-History_paginate"><ul class="pagination"><li class="paginate_button page-item previous disabled" id="Transaction-History_previous"><a href="#" aria-controls="Transaction-History" data-dt-idx="0" tabindex="0" class="page-link">Prev</a></li><li class="paginate_button page-item active"><a href="#" aria-controls="Transaction-History" data-dt-idx="1" tabindex="0" class="page-link">1</a></li><li class="paginate_button page-item "><a href="#" aria-controls="Transaction-History" data-dt-idx="2" tabindex="0" class="page-link">2</a></li><li class="paginate_button page-item next" id="Transaction-History_next"><a href="#" aria-controls="Transaction-History" data-dt-idx="3" tabindex="0" class="page-link">Next</a></li></ul></div></div></div></div>
+										<div class="table-responsive">
+											<table id="questions-table" class="table align-middle mb-0 w-100">
+												<thead class="table-light"></thead>
+											</table>
 										</div>
 									</div>
 								</div>
@@ -165,7 +117,7 @@
 					</div>
 					<div class="col-md-12" bis_skin_checked="1">
 						<label for="finalMessage" class="form-label">Mensaje final</label>
-						<textarea name="finalMessage" type="text" class="form-control" id="finalMessage">Gracias por tomarte el tiempo de responder, pronto recibirás noticias!</textarea>
+						<textarea name="lastMessage" type="text" class="form-control" id="finalMessage">Gracias por tomarte el tiempo de responder, pronto recibirás noticias!</textarea>
 					</div>
 					<div class="col-md-12" bis_skin_checked="1">
 						<label for="wrongAnswer" class="form-label">Respuesta incorrecta</label>
@@ -176,6 +128,46 @@
 			<div class="modal-footer" bis_skin_checked="1">
 				<button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
 				<button type="submit" form="basic_messages_form" class="btn btn-success">Guardar</button>
+			</div>
+		</div>
+	</div>
+</div>
+
+<!--MODAL AÑADIR PREGUNTA-->
+<div class="modal fade" id="add_question" tabindex="-1" aria-labelledby="add_question" aria-hidden="true" bis_skin_checked="1">
+	<div class="modal-dialog modal-dialog-centered" bis_skin_checked="1">
+		<div class="modal-content" bis_skin_checked="1">
+			<div class="modal-header" bis_skin_checked="1">
+				<h5 class="modal-title" id="exampleModalLabel">Añadir</h5>
+				<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+			</div>
+			<div class="modal-body" bis_skin_checked="1">
+				<form id="add_question_form" class="row g-3">
+					<div class="col-md-12" bis_skin_checked="1">
+						<label for="question" class="form-label">Pregunta</label>
+						<textarea name="question" type="text" class="form-control" id="question"></textarea>
+					</div>
+					<hr>
+					<div class="col-md-12" bis_skin_checked="1">
+						<label for="finalMessage" class="form-label">Respuestas</label>
+						<div class="input-group mb-3"> <span class="input-group-text" id="basic-addon1">1</span>
+							<input type="text" name="firstAnswer" id="firstAnswer" class="form-control" placeholder="" aria-label="" aria-describedby="basic-addon1">
+						</div>	
+						<div class="input-group mb-3"> <span class="input-group-text" id="basic-addon1">2</span>
+							<input type="text" name="secondAnswer" id="secondAnswer" class="form-control" placeholder="" aria-label="" aria-describedby="basic-addon1">
+						</div>	
+						<div class="input-group mb-3"> <span class="input-group-text" id="basic-addon1">3</span>
+							<input type="text" name="thirdAnswer" id="thirdAnswer" class="form-control" placeholder="" aria-label="" aria-describedby="basic-addon1">
+						</div>	
+						<div class="input-group mb-3"> <span class="input-group-text" id="basic-addon1">4</span>
+							<input type="text" name="fourthAnswer" id="fourthAnswer" class="form-control" placeholder="" aria-label="" aria-describedby="basic-addon1">
+						</div>			
+					</div>
+				</form>
+			</div>
+			<div class="modal-footer" bis_skin_checked="1">
+				<button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+				<button type="submit" form="add_question_form" class="btn btn-success">Guardar</button>
 			</div>
 		</div>
 	</div>
