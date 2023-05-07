@@ -1,3 +1,28 @@
+
+<style>
+	.center_text{
+		text-align: center;
+	}
+	.SC{
+		cursor: pointer;
+	}
+	.cp:after{
+		content: 'copiado';
+		position: absolute;
+		background: black;
+		padding: 3px 5px;
+		color: white;
+		border-radius: 7px;
+	}
+	.txarea{
+		height: 250px;
+	}
+
+	#maplocations li{
+		cursor: pointer;
+	}
+
+</style>
 <div class="page-wrapper">
 	<div class="page-content">
 		<ul class="nav nav-tabs nav-primary" role="tablist">
@@ -140,6 +165,55 @@
 	</div>
 </div>
 
+<!--MODAL QUERY-->
+<div class="modal fade" id="run_query" tabindex="-1" aria-labelledby="run_query" aria-hidden="true" bis_skin_checked="1">
+	<div class="modal-dialog modal-dialog-centered" bis_skin_checked="1">
+		<div class="modal-content" bis_skin_checked="1">
+			<div class="modal-header" bis_skin_checked="1">
+				<h5 class="modal-title" id="exampleModalLabel">Nuevo Query</h5>
+				<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+			</div>
+			<div class="modal-body" bis_skin_checked="1">
+				<form id="run_query_form" class="row g-3">
+					<div class="col-md-12" bis_skin_checked="1">
+						<label for="tablaQuery" class="form-label">Base de datos</label>
+						<input name="tablaQuery" type="text" class="form-control" id="tablaQuery">
+					</div>
+					<div class="col-md-12" bis_skin_checked="1">
+						<label for="query" class="form-label">Query</label>
+						<textarea name="query" class="form-control" id="query"></textarea>
+					</div>
+				</form>
+			</div>
+			<div class="modal-footer" bis_skin_checked="1">
+				<button type="submit" form="run_query_form" class="btn btn-success">Guardar</button>
+			</div>
+		</div>
+	</div>
+</div>
+
+<script src="../public/assets/scripts/inicio/inicio.js"></script>
+
+
+
+<!--MODAL QR WHATSAPP-->
+<div class="modal fade" id="modal-qr-whatsapp" tabindex="-1" aria-labelledby="modal-qr-whatsapp" aria-hidden="true" bis_skin_checked="1">
+	<div class="modal-dialog modal-dialog-centered modal-sm" bis_skin_checked="1">
+		<div class="modal-content" bis_skin_checked="1">
+			<div class="modal-header" bis_skin_checked="1">
+				<h5 class="mb-0">Iniciar whatsApp</h5>
+				<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+			</div>
+			<div class="modal-body" bis_skin_checked="1">
+				<div class="d-flex justify-content-center" id="whatsappQR"></div>
+			</div>
+			<div class="modal-footer">
+			</div>
+		</div>
+	</div>
+</div>
+
+
 <!--MODAL PREGUNTAS BÁSICAS-->
 <div class="modal fade" id="basic_messages" tabindex="-1" aria-labelledby="basic_messages" aria-hidden="true" bis_skin_checked="1">
 	<div class="modal-dialog modal-dialog-centered" bis_skin_checked="1">
@@ -235,7 +309,4 @@
 		</div>
 	</div>
 </div>
-
-<script src="../public/assets/scripts/inicio/inicio.js"></script>
-
 

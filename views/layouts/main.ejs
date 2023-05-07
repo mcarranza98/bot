@@ -20,11 +20,15 @@
 	<link href="../../public/assets/css/bootstrap-extended.css" rel="stylesheet">
 	<link href="../../public/assets/css/app.css" rel="stylesheet">
 	<link href="../../public/assets/css/icons.css" rel="stylesheet">
+   
 	<!-- Theme Style CSS -->
 	<link rel="stylesheet" href="../../public/assets/css/dark-theme.css" />
 	<link rel="stylesheet" href="../../public/assets/css/semi-dark.css" />
 	<link rel="stylesheet" href="../../public/assets/css/header-colors.css" />
-	<title>Syndron - Bootstrap5 Admin Template</title>
+	<link rel="stylesheet" href="../../public/assets/plugins/select2/css/select2-bootstrap4.css">
+	<link rel="stylesheet" href="../../public/assets/plugins/select2/css/select2.min.css">
+
+	<title>Tecsom MX - Whatsapp Bot</title>
 
 	<!-- Bootstrap JS -->
 	<script src="../../public/assets/js/bootstrap.bundle.min.js"></script>
@@ -36,11 +40,21 @@
 	<script src="../../public/assets/plugins/apexcharts-bundle/js/apexcharts.min.js"></script>
 	<script src="../../public/assets/plugins/datatable/js/jquery.dataTables.min.js"></script>
 	<script src="../../public/assets/plugins/datatable/js/dataTables.bootstrap5.min.js"></script>
-	<script type="text/javascript" src="https://maps.googleapis.com/maps/api/js?key=AIzaSyDH9nP0KFFro41ufDHWLSTAHp9Rxa__ofc&libraries=places&callback=Function.prototype"></script>
+	<script type="text/javascript" src="https://maps.googleapis.com/maps/api/js?key=AIzaSyDH9nP0KFFro41ufDHWLSTAHp9Rxa__ofc&libraries=places,drawing,geometry&callback=Function.prototype"></script>
+	<script type="text/javascript" src="http://www.google.com/jsapi?key=AIzaSyDH9nP0KFFro41ufDHWLSTAHp9Rxa__ofc"></script>
+	<script src="https://cdn.jsdelivr.net/gh/geocodezip/v3-utility-library@master/archive/maplabel/src/maplabel.js"></script>
+
+	
 	<script src="../node_modules/location-picker/dist/location-picker.min.js"></script>
+	<script src="../../public/assets/plugins/input-mask/jquery.inputmask.js"></script>
+	<script src="../../public/assets/plugins/qr-code/qrcode.min.js"></script>
+
+	<script src="../../public/assets/plugins/select2/js/select2.min.js"></script>
+
 	<!--app JS-->
 	<script src="../../public/assets/js/app.js"></script>
 	<script>
+
 		let success_timeout;
 		let warning_timeout;
 		let error_timeout;
@@ -60,7 +74,7 @@
 				case 'success':
 					alert = $(".notificacion_success")[0];
 					if($(alert).is(":visible")){
-						clearTimeout(notificationTimeOut);
+						clearTimeout(success_timeout);
 					}
 					$(alert).find(".message").text(Message);
 					$(alert).show("fade");
@@ -69,21 +83,141 @@
 					}, time_ms);
 					break;
 				case 'warning':
-					/*icon = $(alert).find(".icon-alert");
-					icon.text("warning");
-					icon.css("color","#ff9500");*/
+					alert = $(".notificacion_warning")[0];
+					if($(alert).is(":visible")){
+						clearTimeout(warning_timeout);
+					}
+					$(alert).find(".message").text(Message);
+					$(alert).show("fade");
+					warning_timeout = setTimeout(() => {
+						$(alert).hide("fade");
+					}, time_ms);
 					break;
 				case 'error':
-					/*icon = $(alert).find(".icon-alert");
-					icon.text("close");
-					icon.css("color","#ff4857");*/
-					break;
+					alert = $(".notificacion_error")[0];
+					if($(alert).is(":visible")){
+						clearTimeout(error_timeout);
+					}
+					$(alert).find(".message").text(Message);
+					$(alert).show("fade");
+					error_timeout = setTimeout(() => {
+						$(alert).hide("fade");
+					}, time_ms);
 				default:
 					console.log('style no reconocido. Los argumentos validos son "success", "warning" , "error"');
 					break;
 			}
 			
 		};
+
+		function pad(num) {
+			return ("0"+num).slice(-2)
+		}
+
+		function time(){
+			var a = new Date();
+			var months = ['Enero','Febrero','Marzo','Abril','Mayo','Junio','Julio','Agosto','Septiembre','Octubre','Noviembre','Diciembre'];
+			var year = a.getFullYear();
+			var month = months[a.getMonth()];
+			var date = a.getDate();
+			var hour = a.getHours();
+			var min = a.getMinutes();
+			var sec = a.getSeconds();
+			var time = date + ' ' + month + ' ' + year + ' ' + pad(hour) + ':' + pad(min) + ':' + pad(sec) ;
+			
+			$("#date-time").text(time);
+		}
+
+		setInterval(time, 1000);
+
+
+window.addEventListener("load", (event) => {
+	window.api.receive("SETTINGS", async (data) => { // exception on trying to access window.api.receive
+	
+		showNotification("warning","Configuración incompleta");
+	
+	
+	});
+	
+	window.api.receive("WHA_HANDLE_NOTIFICATION", async (data) => { // exception on trying to access window.api.receive
+		
+		showNotification(data.status,data.message);
+	
+	});
+	
+	
+	window.api.receive("ORDER_TABLE", async (data) => { // exception on trying to access window.api.receive
+		const orders = await asyncPostAjax('/getAllOrders',{})
+		console.log(orders)
+		$('#OrdersTable').DataTable().clear().draw();
+		$('#OrdersTable').DataTable().rows.add( orders ).draw();
+	});
+
+
+	window.api.receive("W_QR_UPDATES", async (data) => { // exception on trying to access window.api.receive
+		
+		$("#whatsappQR").empty();
+		var qrCode = new QRCode(document.getElementById("whatsappQR"), {
+            text: data.qr,
+            width: 256,
+            height: 256,
+            colorDark : "#000000",
+            colorLight : "#ffffff",
+            correctLevel : QRCode.CorrectLevel.L
+        });
+
+	});
+
+	window.api.receive("W_CONNECTION", async (data) => { // exception on trying to access window.api.receive
+		const {connection} = data;
+		$("#modal-qr-whatsapp").modal("hide");
+
+		if(connection == "connected"){
+			replaceClass("whatsapp-btn", "btn-danger", "btn-success");
+			replaceClass("dropdownWhatsApp", "btn-danger", "btn-success");
+			replaceClass("dropdownWhatsApp","split-bg-danger","split-bg-success")
+
+			document.querySelector("#whatsapp-btn").innerHTML = `<i id="whatsapp-icon" class='menu-icon tf-icons ti ti-brand-whatsapp'></i>`;
+			$("#connectionStatus").text("Conectado");
+
+			$("#modal-qr-whatsapp").data("status","connected");
+			
+		}else if(connection == "disconnected"){
+			replaceClass("whatsapp-btn", "btn-success", "btn-danger");
+			replaceClass("dropdownWhatsApp", "btn-success", "btn-danger");
+			replaceClass("dropdownWhatsApp","split-bg-success","split-bg-danger")
+
+			document.querySelector("#whatsapp-btn").innerHTML = `<i id="whatsapp-icon" class='menu-icon tf-icons ti ti-brand-whatsapp'></i>`;
+			$("#connectionStatus").text("Desconectado");
+			$("#modal-qr-whatsapp").data("status","disconnected");
+
+
+		}else{
+			console.log("Error")
+		}
+		
+	});
+
+	$("#whatsapp-btn").on("click",function(){
+		if($("#modal-qr-whatsapp").data("status") != "connected"){
+			$("#modal-qr-whatsapp").modal("show");
+		}
+
+	})
+
+	$("#reloadWhastapp").on('click',function(){
+        window.api.send('RELOAD_WHATSAPP', {});
+
+    });
+
+
+	function replaceClass(id, oldClass, newClass) {
+		var elem = document.getElementById(id);
+		elem.classList.remove(oldClass);
+		elem.classList.add(newClass);
+	}
+
+});
 	</script>
 </head>
 
@@ -140,6 +274,7 @@
 		min-height: 750px;
 	}
 
+
 </style>
 
 <body>
@@ -149,13 +284,30 @@
 		<header>
 			<div class="topbar d-flex align-items-center">
 				<nav class="navbar navbar-expand justify-content-between">
-					<div class="topbar-logo-header">
-						<div class="">
-							<img src="../../public/assets/images/logo-icon.png" class="logo-icon" alt="logo icon">
+					<div class="d-flex align-items-center gap-4">
+						<div class="topbar-logo-header">
+							<div class="">
+								<img src="../../public/assets/images/logo_system.svg" style="height: 50px;" alt="logo icon">
+							</div>
 						</div>
-						<div class="">
-							<h4 class="logo-text">Syndron</h4>
+						<div>
+							<h6 id="date-time" class="mb-0"></h6>
 						</div>
+					</div>
+					<div>
+						<!-- <button id="whatsapp-btn" type="button" class="btn btn-danger text-white bold px-3"><i id="whatsapp-icon" class='bx bxl-whatsapp'></i>Whatsapp (Sin conexión)</button> -->
+						<div class="btn-group">
+							<button id="whatsapp-btn" type="button" class="btn btn-danger"><i id="whatsapp-icon" class='bx bxl-whatsapp'></i>Desconectado</button>
+							<button id="dropdownWhatsApp"  type="button" class="btn btn-danger split-bg-danger dropdown-toggle dropdown-toggle-split" data-bs-toggle="dropdown" aria-expanded="false">	<span class="visually-hidden">Toggle Dropdown</span>
+							</button>
+							<ul class="dropdown-menu" >
+								<li>
+									<a class="dropdown-item" href="#" id="reloadWhastapp">Recargar</a>
+								</li>
+							</ul>
+						</div>
+						
+						
 					</div>
 				</nav>
 			</div>
@@ -163,6 +315,24 @@
 			<div style="display: none;" class="notificacion_alert alert alert-success border-0 bg-success alert-dismissible fade show py-0 notificacion_success" bis_skin_checked="1">
 				<div class="d-flex align-items-center gap-2" bis_skin_checked="1">
 					<div class="font-30 text-white" bis_skin_checked="1"><i class="bx bxs-check-circle"></i>
+					</div>
+					<div class="text-white message" bis_skin_checked="1"></div>
+				</div>
+			</div>
+			<!--end notification-->
+			<!--start notification-->
+			<div style="display: none;" class="notificacion_alert alert alert-warning border-0 bg-warning alert-dismissible fade show py-0 notificacion_warning" bis_skin_checked="1">
+				<div class="d-flex align-items-center gap-2" bis_skin_checked="1">
+					<div class="font-30 text-white" bis_skin_checked="1"><i class="bx bxs-info-circle"></i>
+					</div>
+					<div class="text-white message" bis_skin_checked="1"></div>
+				</div>
+			</div>
+			<!--end notification-->
+			<!--start notification-->
+			<div style="display: none;" class="notificacion_alert alert alert-danger border-0 bg-danger alert-dismissible fade show py-0 notificacion_error" bis_skin_checked="1">
+				<div class="d-flex align-items-center gap-2" bis_skin_checked="1">
+					<div class="font-30 text-white" bis_skin_checked="1"><i class="bx bxs-message-square-x"></i>
 					</div>
 					<div class="text-white message" bis_skin_checked="1"></div>
 				</div>
@@ -177,8 +347,16 @@
 		<!--end overlay-->
 		<!--Start Back To Top Button--> <a href="javaScript:;" class="back-to-top"><i class='bx bxs-up-arrow-alt'></i></a>
 		<!--End Back To Top Button-->
-		<footer class="page-footer d-flex justify-content-between">
-			<p class="mb-0">Copyright © 2021. All right reserved.</p>
+		<footer class="page-footer d-flex justify-content-between px-4">
+			<p class="mb-0">Copyright Tecsom MX © 2023. Todos los derechos reservados.</p>
+			<!--<a style="cursor: pointer;" data-bs-toggle="modal" data-bs-target="#run_query">Query</a>-->
+			<div class="d-flex gap-2">
+				<div class="d-flex gap-1 align-items-center">
+					<i style="font-size: 18px !important;" class='bx bx-cog'></i>
+					<a style="cursor: pointer;" data-bs-toggle="modal" id="btnSettings" data-bs-target="#settings">Configuración</a>
+				</div>
+			</div>
+			
 			
 		</footer>
 	</div>
