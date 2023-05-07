@@ -102,7 +102,7 @@ const createWhatsappView = async(window, browser) => {
 
     const view = new BrowserView();
 
-    const post = await getImage('ratemypoo');
+    const post = await getImage('ratemysetup');
 
     const media = await MessageMedia.fromUrl(post); 
 
