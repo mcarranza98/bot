@@ -11,6 +11,7 @@ createApp();
 const db_main = new Database(path.join(__dirname, '..' , 'database' , 'questions.db'));
 
 const initOrders = `CREATE TABLE IF NOT EXISTS basics (
+                    id  BIT NOT NULL,
                     firstMessage TEXT NOT NULL, 
                     lastMessage TEXT NOT NULL, 
                     wrongAnswer TEXT NOT NULL

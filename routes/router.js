@@ -94,7 +94,9 @@ router.get('/load_settings', async function (req, res, next) {
   db.pragma('journal_mode = WAL');
 
   const command = db.prepare('SELECT * FROM settings');
-  const settings = command.all();
+  const settings = command.get();
+
+
 
   db.close();
   res.send({ res: settings });
@@ -164,6 +166,49 @@ router.post('/upload_settings', function(req, res, next) {
   }
   
 });
+
+
+
+router.get('/load_basics', async function (req, res, next) { 
+
+  const db = new Database(path.join(__dirname, '..' , 'database' , 'questions.db'));
+
+  db.pragma('journal_mode = WAL');
+
+  const command = db.prepare('SELECT * FROM basics');
+  const settings = command.get();
+
+
+
+  db.close();
+  res.send({ res: settings });
+
+});
+
+
+router.post('/upload_basics', function(req, res, next) {
+
+    const{ firstMessage, lastMessage, wrongAnswer} = req.body;
+
+    const db = new Database(path.join(__dirname, '..' , 'database' , 'questions.db'));
+
+    command = db.prepare(`UPDATE basics
+                                          SET id = 1,
+                                              firstMessage = ?,
+                                              lastMessage = ?,
+                                              wrongAnswer = ?
+
+                                          WHERE
+                                              id = 1 `);
+    
+    command.run( firstMessage , lastMessage, wrongAnswer );
+
+    res.send({state: "success" , message : "Configuración actualizada exitosamente."});
+
+    db.close();
+
+});
+
 
 
 

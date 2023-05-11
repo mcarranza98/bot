@@ -28,7 +28,7 @@
 	<link rel="stylesheet" href="../../public/assets/plugins/select2/css/select2-bootstrap4.css">
 	<link rel="stylesheet" href="../../public/assets/plugins/select2/css/select2.min.css">
 
-	<title>Tecsom MX - Whatsapp Bot</title>
+	<title>Indix Bot</title>
 
 	<!-- Bootstrap JS -->
 	<script src="../../public/assets/js/bootstrap.bundle.min.js"></script>
@@ -58,6 +58,7 @@
 		let success_timeout;
 		let warning_timeout;
 		let error_timeout;
+		let telConectado;
 		
 
 		
@@ -173,6 +174,7 @@ window.addEventListener("load", (event) => {
 		$("#modal-qr-whatsapp").modal("hide");
 
 		if(connection == "connected"){
+			telConectado = true;
 			replaceClass("whatsapp-btn", "btn-danger", "btn-success");
 			replaceClass("dropdownWhatsApp", "btn-danger", "btn-success");
 			replaceClass("dropdownWhatsApp","split-bg-danger","split-bg-success")
@@ -198,6 +200,7 @@ window.addEventListener("load", (event) => {
 		
 	});
 
+
 	$("#whatsapp-btn").on("click",function(){
 		if($("#modal-qr-whatsapp").data("status") != "connected"){
 			$("#modal-qr-whatsapp").modal("show");
@@ -209,6 +212,8 @@ window.addEventListener("load", (event) => {
         window.api.send('RELOAD_WHATSAPP', {});
 
     });
+
+
 
 
 	function replaceClass(id, oldClass, newClass) {
@@ -248,6 +253,7 @@ window.addEventListener("load", (event) => {
 		display: flex;
 		align-items: center;
 		justify-content: center;
+		border-radius: 20px;
 	}
 
 	.secondaryCard{
@@ -266,9 +272,6 @@ window.addEventListener("load", (event) => {
 		background: #B8E2B6;
 	}
 
-	.mainCardWhatsapp{
-		background: #FBB3BA;
-	}
 
 	.mainTableChats{
 		min-height: 750px;
@@ -297,14 +300,14 @@ window.addEventListener("load", (event) => {
 					<div>
 						<!-- <button id="whatsapp-btn" type="button" class="btn btn-danger text-white bold px-3"><i id="whatsapp-icon" class='bx bxl-whatsapp'></i>Whatsapp (Sin conexión)</button> -->
 						<div class="btn-group">
-							<button id="whatsapp-btn" type="button" class="btn btn-danger"><i id="whatsapp-icon" class='bx bxl-whatsapp'></i>Desconectado</button>
+							<!--<button id="whatsapp-btn" type="button" class="btn btn-danger"><i id="whatsapp-icon" class='bx bxl-whatsapp'></i>Desconectado</button>
 							<button id="dropdownWhatsApp"  type="button" class="btn btn-danger split-bg-danger dropdown-toggle dropdown-toggle-split" data-bs-toggle="dropdown" aria-expanded="false">	<span class="visually-hidden">Toggle Dropdown</span>
 							</button>
 							<ul class="dropdown-menu" >
 								<li>
 									<a class="dropdown-item" href="#" id="reloadWhastapp">Recargar</a>
 								</li>
-							</ul>
+							</ul>-->
 						</div>
 						
 						
@@ -348,7 +351,7 @@ window.addEventListener("load", (event) => {
 		<!--Start Back To Top Button--> <a href="javaScript:;" class="back-to-top"><i class='bx bxs-up-arrow-alt'></i></a>
 		<!--End Back To Top Button-->
 		<footer class="page-footer d-flex justify-content-between px-4">
-			<p class="mb-0">Copyright Tecsom MX © 2023. Todos los derechos reservados.</p>
+			<p class="mb-0">Copyright Indix © 2023. Todos los derechos reservados.</p>
 			<!--<a style="cursor: pointer;" data-bs-toggle="modal" data-bs-target="#run_query">Query</a>-->
 			<div class="d-flex gap-2">
 				<div class="d-flex gap-1 align-items-center">

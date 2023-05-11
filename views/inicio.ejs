@@ -58,7 +58,7 @@
 									<div class="card-body">
 										<div class="d-flex align-items-center">
 											<div>
-												<h5 class="mb-1">Chats</h5>
+												<h5 class="mb-1">Preguntas</h5>
 											</div>
 										</div>
 										<div class="table-responsive mt-4">
@@ -76,7 +76,7 @@
 							<div class="col-xl-4">
 								<button type="button" class="btn card radius-10 mainCard "><i class='bx bxs-chat' ></i></button>
 								<button type="button"  data-bs-toggle="modal" data-bs-target="#settings" class="btn card radius-10 mainCard"><i class='bx bx-cog'></i></button>
-								<button id="whatsapp-btn" type="button" class="btn card radius-10 mainCard mainCardWhatsapp"><i class='bx bxl-whatsapp'></i></button>
+								<button id="whatsapp-btn" type="button" class="btn btn-danger mainCard"><i class='bx bxl-whatsapp'></i></button>
 							</div>
 						</div>
 						
@@ -137,7 +137,7 @@
 									<div class="card-body">
 										<div class="d-flex align-items-center">
 											<div>
-												<h5 class="mb-1">Chats</h5>
+												<h5 class="mb-1">Encuestas finalizadas</h5>
 											</div>
 										</div>
 										<div class="table-responsive mt-4">
@@ -192,7 +192,7 @@
 	</div>
 </div>
 
-<script src="../public/assets/scripts/inicio/inicio.js"></script>
+
 
 
 
@@ -226,15 +226,15 @@
 				<form id="basic_messages_form" class="row g-3">
 					<div class="col-md-12" bis_skin_checked="1">
 						<label for="firstMessage" class="form-label">Mensaje de bienvenida</label>
-						<textarea name="firstMessage" type="text" class="form-control" id="firstMessage">¡Hola! Gracias por comunicarte conmigo.</textarea>
+						<textarea name="firstMessage" type="text" class="form-control" id="firstMessage"></textarea>
 					</div>
 					<div class="col-md-12" bis_skin_checked="1">
-						<label for="finalMessage" class="form-label">Mensaje final</label>
-						<textarea name="finalMessage" type="text" class="form-control" id="finalMessage">Gracias por tomarte el tiempo de responder, pronto recibirás noticias!</textarea>
+						<label for="lastMessage" class="form-label">Mensaje final</label>
+						<textarea name="lastMessage" type="text" class="form-control" id="lastMessage"></textarea>
 					</div>
 					<div class="col-md-12" bis_skin_checked="1">
 						<label for="wrongAnswer" class="form-label">Respuesta incorrecta</label>
-						<textarea name="wrongAnswer" type="text" class="form-control" id="wrongAnswer">Lo lamento, no comprendí tu respuesta, podrías reenviarla por favor.</textarea>
+						<textarea name="wrongAnswer" type="text" class="form-control" id="wrongAnswer"></textarea>
 					</div>
 				</form>
 			</div>
@@ -310,3 +310,4 @@
 	</div>
 </div>
 
+<script src="../public/assets/scripts/inicio/inicio.js"></script>

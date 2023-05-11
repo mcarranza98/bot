@@ -81,6 +81,7 @@ const createApp = async () => {
             createMainWindow(app);
         }
     });
+
     
 };
 
@@ -138,6 +139,26 @@ function attachView_Whatsapp(client,window){
 const createWhatsappView = async (window) => {
 
     console.log("view");
+
+
+    const db_questions = new Database(path.resolve(__dirname, '..', 'database' , 'questions.db'));
+    let command = db_questions.prepare('SELECT * FROM basics' );
+    const orders = command.all();
+
+    console.log({orders:orders.length});
+
+    if( orders.length == 0 ){
+
+        const initialMessages = `INSERT INTO basics (id, firstMessage, lastMessage, wrongAnswer)
+                    VALUES (
+                        1,
+                        '¡Hola! Gracias por comunicarte conmigo.', 
+                        'Gracias por tomarte el tiempo de responder, pronto recibirás noticias!', 
+                        'Lo lamento, no comprendí tu respuesta, podrías reenviarla por favor.')`;
+
+        db_questions.prepare(initialMessages).run();
+
+    }
 
     const view = new BrowserView();
 

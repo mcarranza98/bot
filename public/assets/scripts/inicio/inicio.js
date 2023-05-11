@@ -101,6 +101,91 @@ $('#variacion-table').DataTable({
 });
 
 
+	
+$('#settings').on('shown.bs.modal', async function () {
+		console.log('modal abierto');
+
+        const getSettings = await asyncGetAjax('/load_settings');
+
+        const {botNumber, email, id, name, secondaryNumber} = getSettings.res;
+
+        $('#name').val(name);
+        $('#botNumber').val(botNumber);
+        $('#secondaryNumber').val(secondaryNumber);
+        $('#email').val(email);
+
+        console.log(await asyncGetAjax('/load_settings'));
+
+});
+
+
+$('#settings_form').submit( async function(event) {
+    event.preventDefault();
+
+    var formData = $(this).serializeArray();
+
+    const datos = [];
+
+    formData.forEach(element => {
+        datos[element.name] = element.value;
+    });
+
+    console.log({datos});
+
+    const postSettings = await asyncPostAjax('/upload_settings', { name : datos.name, botNumber : datos.botNumber, secondaryNumber : datos.secondaryNumber , email : datos.email });
+
+    if( postSettings.state = 'success' ){
+
+        $('#settings').modal('toggle');
+
+    }
+
+
+    showNotification(postSettings.state,  postSettings.message);
+});
+
+
+
+  $('#basic_messages').on('shown.bs.modal', async function () {
+    console.log('modal abierto');
+
+    const getBasics = await asyncGetAjax('/load_basics');
+
+    const {firstMessage, lastMessage, wrongAnswer} = getBasics.res;
+
+    $('#firstMessage').val(firstMessage);
+    $('#lastMessage').val(lastMessage);
+    $('#wrongAnswer').val(wrongAnswer);
+
+    console.log(await asyncGetAjax('/load_basics'));
+
+});
+
+
+$('#basic_messages_form').submit( async function(event) {
+    event.preventDefault();
+
+    var formData = $(this).serializeArray();
+
+    const datos = [];
+
+    formData.forEach(element => {
+        datos[element.name] = element.value;
+    });
+
+    console.log({datos});
+
+    const postBasics = await asyncPostAjax('/upload_basics', { firstMessage : datos.firstMessage, lastMessage : datos.lastMessage, wrongAnswer : datos.wrongAnswer });
+
+    if( postBasics.state = 'success' ){
+
+        $('#basic_messages').modal('toggle');
+
+    }
+
+    showNotification(postBasics.state,  postBasics.message);
+});
+
 
 
 
@@ -137,3 +222,25 @@ async function asyncPostAjax( path, data, ){
     });
 
 }
+
+
+async function asyncGetAjax( path ){
+
+    return await $.ajax({
+
+        type: 'GET',
+        url: path,
+        headers: {
+            Accept: "application/json",
+            "Content-Type": "application/json",
+        },
+        success: function(result){
+        
+            return result;
+            
+        },
+
+    });
+
+}
+
