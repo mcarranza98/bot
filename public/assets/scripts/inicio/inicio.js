@@ -187,10 +187,74 @@ $('#basic_messages_form').submit( async function(event) {
 });
 
 
+$('#add_question_form').submit( async function(event) {
+    event.preventDefault();
+
+    var formData = $(this).serializeArray();
+
+    const datos = [];
+
+    formData.forEach(element => {
+        datos[element.name] = element.value;
+    });
+
+    console.log({datos});
+
+    /*const postBasics = await asyncPostAjax('/upload_basics', { firstMessage : datos.firstMessage, lastMessage : datos.lastMessage, wrongAnswer : datos.wrongAnswer });
+
+    if( postBasics.state = 'success' ){
+
+        $('#basic_messages').modal('toggle');
+
+    }
+
+    showNotification(postBasics.state,  postBasics.message);*/
+});
+
+
+function addRespuesta(){
+
+    const numResp = $('#divRespuestas').find(".input-group").length + 1;
+
+    if ( numResp <= 9 ) {
+
+            let plantillaRespuesta = `
+        <div class="rspIG input-group mb-3">
+            <span class="rspIG input-group-text" id="respuesta-${numResp}">${numResp}</span>
+            <input type="text" class="form-control" placeholder="Respuesta" name="respuesta-${numResp}">
+        </div>`;
+
+        $('#divRespuestas').append(plantillaRespuesta);
+
+    }else{
+
+        alert('El número máximo de respuestas permitidas es de 9');
+
+    }
+
+    
+}
+
+
+    $('#divRespuestas').on('click' , ".rspIG.input-group-text" ,  function() {
+    
+        var padreDirecto = $(this).parent();
+
+        padreDirecto.remove();
+    
+        console.log(padreDirecto);
+    
+    
+    });
 
 
 $(document).ready(async function() {
    
+    
+
+
+
+
 });
 
 

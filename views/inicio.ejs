@@ -135,10 +135,12 @@
 							<div class="col-xl-8 d-flex mainTableChats">
 								<div class="card radius-10 w-100">
 									<div class="card-body">
-										<div class="d-flex align-items-center">
+										<div class="d-flex align-items-center justify-content-between align-self-center">
 											<div>
 												<h5 class="mb-1">Encuestas finalizadas</h5>
+												
 											</div>
+											<button data-bs-toggle="modal" data-bs-target="#add_question" class="btn btn-success">Agregar pregunta</button>
 										</div>
 										<div class="table-responsive mt-4">
 											<div id="Transaction-History_wrapper" class="dataTables_wrapper dt-bootstrap5 no-footer"><div class="row"><div class="col-sm-12 col-md-6"><div class="dataTables_length" id="Transaction-History_length"><label>Show <select name="Transaction-History_length" aria-controls="Transaction-History" class="form-select form-select-sm"><option value="6">6</option><option value="10">10</option><option value="20">20</option><option value="-1">Todos</option></select> entries</label></div></div><div class="col-sm-12 col-md-6"><div id="Transaction-History_filter" class="dataTables_filter"><label>Search:<input type="search" class="form-control form-control-sm" placeholder="" aria-controls="Transaction-History"></label></div></div></div><div class="row"><div class="col-sm-12"><table class="table align-middle mb-0 table-hover dataTable no-footer" id="Transaction-History" role="grid" aria-describedby="Transaction-History_info">
@@ -192,7 +194,39 @@
 	</div>
 </div>
 
+<!--MODAL AGREGAR PREGUNTA-->
+<div class="modal fade" id="add_question" tabindex="-1" aria-labelledby="add_question" aria-hidden="true" bis_skin_checked="1">
+	<div class="modal-dialog modal-dialog-centered" bis_skin_checked="1">
+		<div class="modal-content" bis_skin_checked="1">
+			<div class="modal-header" bis_skin_checked="1">
+				<h5 class="modal-title" id="exampleModalLabel">Nueva pregunta</h5>
+				<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+			</div>
+			<div class="modal-body" bis_skin_checked="1">
+				<form id="add_question_form" class="row g-3">
+					<div class="col-md-12" bis_skin_checked="1">
+						<label for="pregunta" class="form-label">Pregunta</label>
+						<input name="pregunta" type="text" class="form-control">
+					</div>
+					<div class="col-md-12 d-flex justify-content-between align-self-center">
+						<label  class="form-label">Respuestas</label>
+						<button type="button" onclick="addRespuesta()" class="btn btn-primary">Agregar</button>
+					</div>
 
+					<hr>
+
+					<div id="divRespuestas">
+
+					</div>
+					
+				</form>
+			</div>
+			<div class="modal-footer" bis_skin_checked="1">
+				<button type="submit" form="add_question_form" class="btn btn-success">Guardar</button>
+			</div>
+		</div>
+	</div>
+</div>
 
 
 
