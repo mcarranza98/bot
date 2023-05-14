@@ -19,15 +19,14 @@ const initOrders = `CREATE TABLE IF NOT EXISTS basics (
 
 db_main.prepare(initOrders).run();
 
-const initProducts = `CREATE TABLE IF NOT EXISTS questionnaire (
-                    id TEXT NOT NULL UNIQUE, 
-                    descripcion TEXT NOT NULL, 
-                    precio FLOAT NOT NULL,
-                    variaciones TEXT,
-                    estado BOOL
+const initQuestions = `CREATE TABLE IF NOT EXISTS questions (
+                    id INTEGER PRIMARY KEY AUTOINCREMENT, 
+                    pregunta TEXT NOT NULL, 
+                    respuestas TEXT NOT NULL,
+                    cant_respuestas INTEGER NOT NULL
                     )`;
 
-db_main.prepare(initProducts).run();
+db_main.prepare(initQuestions).run();
 
 db_main.close();
 

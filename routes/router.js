@@ -203,13 +203,54 @@ router.post('/upload_basics', function(req, res, next) {
     
     command.run( firstMessage , lastMessage, wrongAnswer );
 
-    res.send({state: "success" , message : "Configuración actualizada exitosamente."});
+    res.send({state: "success" , message : "Actualizado exitosamente."});
 
     db.close();
 
 });
 
+router.post('/upload_question', function(req, res, next) {
 
+  const{ pregunta } = req.body;
+
+  let respuestas = req.body;
+
+  delete respuestas['pregunta'];
+
+  let cant_respuestas = Object.keys(respuestas).length;
+
+  console.log({respuestas});
+  console.log({pregunta});
+  console.log({cant_respuestas});
+
+  const db = new Database(path.join(__dirname, '..' , 'database' , 'questions.db'));
+
+
+  const command = `INSERT INTO questions(pregunta, respuestas, cant_respuestas) 
+                VALUES(@pregunta, @respuestas, @cant_respuestas)`;
+                          
+  const insert = db.prepare(command);
+  
+  const insertQuestion = db.transaction((config) => {
+    
+      insert.run(config);
+
+      res.send({state: "success" , message : "Pregunta agregada exitosamente."});
+
+  });
+
+  const question = {
+      pregunta: pregunta,
+      respuestas: JSON.stringify(respuestas),
+      cant_respuestas : cant_respuestas
+  };
+  
+  insertQuestion(question);
+
+  db.close();
+
+  
+});
 
 
 module.exports = {routes: router}

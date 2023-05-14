@@ -122,17 +122,10 @@ $('#settings').on('shown.bs.modal', async function () {
 $('#settings_form').submit( async function(event) {
     event.preventDefault();
 
-    var formData = $(this).serializeArray();
+    const $form = $("#settings_form");
+    const data = getFormData($form);
 
-    const datos = [];
-
-    formData.forEach(element => {
-        datos[element.name] = element.value;
-    });
-
-    console.log({datos});
-
-    const postSettings = await asyncPostAjax('/upload_settings', { name : datos.name, botNumber : datos.botNumber, secondaryNumber : datos.secondaryNumber , email : datos.email });
+    const postSettings = await asyncPostAjax('/upload_settings', data );
 
     if( postSettings.state = 'success' ){
 
@@ -165,17 +158,10 @@ $('#settings_form').submit( async function(event) {
 $('#basic_messages_form').submit( async function(event) {
     event.preventDefault();
 
-    var formData = $(this).serializeArray();
+    const $form = $("#basic_messages_form");
+    const data = getFormData($form);
 
-    const datos = [];
-
-    formData.forEach(element => {
-        datos[element.name] = element.value;
-    });
-
-    console.log({datos});
-
-    const postBasics = await asyncPostAjax('/upload_basics', { firstMessage : datos.firstMessage, lastMessage : datos.lastMessage, wrongAnswer : datos.wrongAnswer });
+    const postBasics = await asyncPostAjax('/upload_basics', data);
 
     if( postBasics.state = 'success' ){
 
@@ -190,25 +176,20 @@ $('#basic_messages_form').submit( async function(event) {
 $('#add_question_form').submit( async function(event) {
     event.preventDefault();
 
-    var formData = $(this).serializeArray();
+    const $form = $("#add_question_form");
+    const data = getFormData($form);
 
-    const datos = [];
+    console.log({data});
 
-    formData.forEach(element => {
-        datos[element.name] = element.value;
-    });
-
-    console.log({datos});
-
-    /*const postBasics = await asyncPostAjax('/upload_basics', { firstMessage : datos.firstMessage, lastMessage : datos.lastMessage, wrongAnswer : datos.wrongAnswer });
+    const postBasics = await asyncPostAjax('/upload_question', data );
 
     if( postBasics.state = 'success' ){
 
-        $('#basic_messages').modal('toggle');
+        $('#add_question').modal('toggle');
 
     }
 
-    showNotification(postBasics.state,  postBasics.message);*/
+    showNotification(postBasics.state,  postBasics.message);
 });
 
 
@@ -232,6 +213,9 @@ function addRespuesta(){
 
     }
 
+
+    console.log($('#divRespuestas').find('.input-group-text'));
+
     
 }
 
@@ -243,9 +227,24 @@ function addRespuesta(){
         padreDirecto.remove();
     
         console.log(padreDirecto);
+
+        var divContenedor = $('#divRespuestas');
+
+        // Obtener todos los elementos de entrada (input group) dentro del div
+        var inputs = divContenedor.find('.input-group-text');
+
+        console.log(inputs);
+
+        // Recorrer cada elemento y asignar el texto con su respectivo número
+        inputs.each(function(index) {
+            var numero = index + 1;
+            $(this).text(numero);
+            $( this ).parent().find('input').attr('name', `respuesta-${numero}`);
+        });
     
     
     });
+
 
 
 $(document).ready(async function() {
@@ -256,6 +255,27 @@ $(document).ready(async function() {
 
 
 });
+
+
+
+function getFormData($form) {
+
+    var unindexed_array = $form.serializeArray();
+    var indexed_array = {};
+
+    $.map(unindexed_array, function (n, i) {
+
+        indexed_array[n['name']] = n['value'];
+
+    });
+
+    return indexed_array;
+
+}
+
+
+
+
 
 
 async function getOrderData(tel, timestamp){
