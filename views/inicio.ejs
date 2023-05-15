@@ -231,7 +231,35 @@
 	</div>
 </div>
 
-
+<!--MODAL MODIFICAR PREGUNTA-->
+<div class="modal fade" id="mod_question" tabindex="-1" aria-labelledby="mod_question" aria-hidden="true" bis_skin_checked="1">
+	<div class="modal-dialog modal-dialog-centered" bis_skin_checked="1">
+		<div class="modal-content" bis_skin_checked="1">
+			<div class="modal-header" bis_skin_checked="1">
+				<h5 class="modal-title" id="exampleModalLabel">Nueva pregunta</h5>
+				<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+			</div>
+			<div class="modal-body" bis_skin_checked="1">
+				<form id="mod_question_form" class="row g-3">
+					<div class="col-md-12" bis_skin_checked="1">
+						<label for="pregunta" class="form-label">Pregunta</label>
+						<input name="pregunta" id="modPregunta" type="text" class="form-control">
+					</div>
+					<div class="col-md-12 d-flex justify-content-between align-self-center">
+						<label  class="form-label">Respuestas</label>
+						<button type="button" onclick="modRespuesta()" class="btn btn-primary">Agregar</button>
+					</div>
+					<hr>
+					<div id="divModRespuestas">
+					</div>
+				</form>
+			</div>
+			<div class="modal-footer" bis_skin_checked="1">
+				<button type="submit" form="mod_question_form" class="btn btn-success">Guardar</button>
+			</div>
+		</div>
+	</div>
+</div>
 
 <!--MODAL QR WHATSAPP-->
 <div class="modal fade" id="modal-qr-whatsapp" tabindex="-1" aria-labelledby="modal-qr-whatsapp" aria-hidden="true" bis_skin_checked="1">

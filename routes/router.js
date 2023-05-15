@@ -269,4 +269,43 @@ router.post('/upload_question', function(req, res, next) {
 });
 
 
+router.post('/update_question', function(req, res, next) {
+
+  const{ pregunta } = req.body;
+
+  let respuestas = req.body;
+  let id = req.body.id;
+
+
+  delete respuestas['pregunta'];
+  delete respuestas['id'];
+
+  let cant_respuestas = Object.keys(respuestas).length;
+
+  respuestas = JSON.stringify(respuestas);
+  console.log({respuestas});
+  console.log({pregunta});
+  console.log({cant_respuestas});
+  console.log({id});
+
+  const db = new Database(path.join(__dirname, '..' , 'database' , 'questions.db'));
+  
+  command = db.prepare(`UPDATE questions
+                                        SET pregunta = ?,
+                                            respuestas = ?,
+                                            cant_respuestas = ?
+
+                                        WHERE
+                                            id = ? `);
+  
+  command.run( pregunta , respuestas, cant_respuestas , id  );
+
+  res.send({state: "success" , message : "Configuración actualizada exitosamente."});
+
+  db.close();
+
+  
+});
+
+
 module.exports = {routes: router}

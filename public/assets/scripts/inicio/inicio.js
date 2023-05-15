@@ -8,7 +8,7 @@ const settings_iconNP = `<div class="d-flex order-actions" bis_skin_checked="1">
                         </div>`;
 
 const action_iconsNV = `<div class="d-flex order-actions" bis_skin_checked="1">	
-                    <a href="javascript:;"  data-bs-toggle="modal" data-bs-target="#nueva_variacion"><i class="bx bx-edit"></i></a>
+                    <a href="javascript:;"  data-bs-toggle="modal" data-bs-target="#mod_question"><i class="bx bx-edit"></i></a>
                     <a href="javascript:;"  data-bs-toggle="modal" data-bs-target="#eliminar_variacion"class="ms-4"><i class="bx bx-trash"></i></a>
                     </div>`;
 
@@ -164,8 +164,30 @@ $('#add_question_form').submit( async function(event) {
     if( postBasics.state = 'success' ){
 
         $('#add_question').modal('toggle');
-        $('#divRespuestas').html('');
-        $('#pregunta').val('');
+        resetTablaPreguntas();
+
+    }
+
+    showNotification(postBasics.state,  postBasics.message);
+});
+
+
+
+$('#mod_question_form').submit( async function(event) {
+    event.preventDefault();
+
+    const $form = $("#mod_question_form");
+    const data = getFormData($form);
+
+    data.id = $('#mod_question').data('id');
+
+    console.log(data);
+
+    const postBasics = await asyncPostAjax('/update_question', data );
+
+    if( postBasics.state = 'success' ){
+
+        $('#mod_question').modal('toggle');
         resetTablaPreguntas();
 
     }
@@ -195,6 +217,27 @@ $('#divRespuestas').on('click' , ".rspIG.input-group-text" ,  function() {
 
 });
 
+$('#divModRespuestas').on('click' , ".rspIGr.input-group-text" ,  function() {
+
+    var padreDirecto = $(this).parent();
+
+    padreDirecto.remove();
+
+    var divContenedor = $('#divModRespuestas');
+
+    // Obtener todos los elementos de entrada (input group) dentro del div
+    var inputs = divContenedor.find('.input-group-text');
+
+    // Recorrer cada elemento y asignar el texto con su respectivo número
+    inputs.each(function(index) {
+        var numero = index + 1;
+        $(this).text(numero);
+        $( this ).parent().find('input').attr('name', `respuesta-${numero}`);
+    });
+
+
+});
+
 
 $( document ).ready(async function() {
 
@@ -203,14 +246,48 @@ $( document ).ready(async function() {
     $('#tablaPreguntas tbody').on('click', 'tr', function() {
 
         // Obtiene los datos de la fila clickeada
-        var datosFila = tablaPreguntas.row(this).data();
-        
-        // Hacer algo con los datos obtenidos
-        console.log({datosFila});
+        const {id, cant_resp, respuestas, pregunta} = tablaPreguntas.row(this).data();
+
+        //$('#add_question').modal('toggle');
+
+        let respuestasArray = JSON.parse(respuestas);
+
+        $('#modPregunta').val(pregunta);
+
+        $('#mod_question').data({id: id});
+
+        let contResp = 0;
+        for (var [key, value] of Object.entries(respuestasArray)) {
+
+            contResp++;
+
+            let plantillaRespuesta = `
+                <div class="rspIGr input-group mb-3">
+                    <span class="rspIGr input-group-text" id="respuesta-${contResp}">${contResp}</span>
+                    <input type="text" class="form-control" id="Inrespuesta-${contResp}" placeholder="Respuesta" name="respuesta-${contResp}">
+                </div>`;
+
+                $('#divModRespuestas').append(plantillaRespuesta);
+                
+                $(`#Inrespuesta-${contResp}`).val(value);
+
+            }
+
+
     });
     
 });
 
+
+$('#add_question').on('hidden.bs.modal', function () {
+    $('#divRespuestas').html('');
+    $('#pregunta').val('');
+});
+
+$('#mod_question').on('hidden.bs.modal', function () {
+    $('#divModRespuestas').html('');
+    $('#modPregunta').val('');
+});
 
 function getFormData($form) {
 
@@ -234,13 +311,36 @@ function addRespuesta(){
 
     if ( numResp <= 9 ) {
 
-            let plantillaRespuesta = `
-        <div class="rspIG input-group mb-3">
-            <span class="rspIG input-group-text" id="respuesta-${numResp}">${numResp}</span>
-            <input type="text" class="form-control" placeholder="Respuesta" name="respuesta-${numResp}">
-        </div>`;
+        let plantillaRespuesta = `
+            <div class="rspIG input-group mb-3">
+                <span class="rspIG input-group-text" id="respuesta-${numResp}">${numResp}</span>
+                <input type="text" class="form-control" placeholder="Respuesta" name="respuesta-${numResp}">
+            </div>`;
 
         $('#divRespuestas').append(plantillaRespuesta);
+
+    }else{
+
+        alert('El número máximo de respuestas permitidas es de 9');
+
+    }
+
+}
+
+
+function modRespuesta(){
+
+    const numResp = $('#divModRespuestas').find(".input-group").length + 1;
+
+    if ( numResp <= 9 ) {
+
+        let plantillaRespuesta = `
+            <div class="rspIGr input-group mb-3">
+                <span class="rspIGr input-group-text" id="respuesta-${numResp}">${numResp}</span>
+                <input type="text" class="form-control" placeholder="Respuesta" name="respuesta-${numResp}">
+            </div>`;
+
+        $('#divModRespuestas').append(plantillaRespuesta);
 
     }else{
 
