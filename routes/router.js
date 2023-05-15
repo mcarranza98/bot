@@ -185,6 +185,22 @@ router.get('/load_basics', async function (req, res, next) {
 
 });
 
+router.get('/load_questions', async function (req, res, next) { 
+
+  const db = new Database(path.join(__dirname, '..' , 'database' , 'questions.db'));
+
+  db.pragma('journal_mode = WAL');
+
+  const command = db.prepare('SELECT * FROM questions');
+  const settings = command.all();
+
+
+
+  db.close();
+  res.send({ res: settings });
+
+});
+
 
 router.post('/upload_basics', function(req, res, next) {
 

@@ -58,7 +58,7 @@
 									<div class="card-body">
 										<div class="d-flex align-items-center">
 											<div>
-												<h5 class="mb-1">Preguntas</h5>
+												<h5 class="mb-1">Encuestas finalizadas</h5>
 											</div>
 										</div>
 										<div class="table-responsive mt-4">
@@ -137,19 +137,26 @@
 									<div class="card-body">
 										<div class="d-flex align-items-center justify-content-between align-self-center">
 											<div>
-												<h5 class="mb-1">Encuestas finalizadas</h5>
-												
+												<h5 class="mb-1">Preguntas</h5>
 											</div>
 											<button data-bs-toggle="modal" data-bs-target="#add_question" class="btn btn-success">Agregar pregunta</button>
 										</div>
 										<div class="table-responsive mt-4">
-											<div id="Transaction-History_wrapper" class="dataTables_wrapper dt-bootstrap5 no-footer"><div class="row"><div class="col-sm-12 col-md-6"><div class="dataTables_length" id="Transaction-History_length"><label>Show <select name="Transaction-History_length" aria-controls="Transaction-History" class="form-select form-select-sm"><option value="6">6</option><option value="10">10</option><option value="20">20</option><option value="-1">Todos</option></select> entries</label></div></div><div class="col-sm-12 col-md-6"><div id="Transaction-History_filter" class="dataTables_filter"><label>Search:<input type="search" class="form-control form-control-sm" placeholder="" aria-controls="Transaction-History"></label></div></div></div><div class="row"><div class="col-sm-12"><table class="table align-middle mb-0 table-hover dataTable no-footer" id="Transaction-History" role="grid" aria-describedby="Transaction-History_info">
-												<thead class="table-light">
-													<tr role="row"><th class="sorting_asc" tabindex="0" aria-controls="Transaction-History" rowspan="1" colspan="1" aria-sort="ascending" aria-label="Payment Name: activate to sort column descending" style="width: 466.938px;">Payment Name</th><th class="sorting" tabindex="0" aria-controls="Transaction-History" rowspan="1" colspan="1" aria-label="Date &amp;amp; Time: activate to sort column ascending" style="width: 185.219px;">Date &amp; Time</th><th class="sorting" tabindex="0" aria-controls="Transaction-History" rowspan="1" colspan="1" aria-label="Amount: activate to sort column ascending" style="width: 130.781px;">Amount</th><th class="sorting" tabindex="0" aria-controls="Transaction-History" rowspan="1" colspan="1" aria-label="Status: activate to sort column ascending" style="width: 129.047px;">Status</th></tr>
-												</thead>
-												<tbody>
-												</tbody>
-											</table></div></div><div class="row"><div class="col-sm-12 col-md-5"><div class="dataTables_info" id="Transaction-History_info" role="status" aria-live="polite">Showing 1 to 6 of 12 entries</div></div><div class="col-sm-12 col-md-7"><div class="dataTables_paginate paging_simple_numbers" id="Transaction-History_paginate"><ul class="pagination"><li class="paginate_button page-item previous disabled" id="Transaction-History_previous"><a href="#" aria-controls="Transaction-History" data-dt-idx="0" tabindex="0" class="page-link">Prev</a></li><li class="paginate_button page-item active"><a href="#" aria-controls="Transaction-History" data-dt-idx="1" tabindex="0" class="page-link">1</a></li><li class="paginate_button page-item "><a href="#" aria-controls="Transaction-History" data-dt-idx="2" tabindex="0" class="page-link">2</a></li><li class="paginate_button page-item next" id="Transaction-History_next"><a href="#" aria-controls="Transaction-History" data-dt-idx="3" tabindex="0" class="page-link">Next</a></li></ul></div></div></div></div>
+											<div id="tablaPreguntas_wrapper" class="dataTables_wrapper">
+												
+												<div class="row">
+													<div class="col-sm-12">
+														
+														<table id="tablaPreguntas" class="col-sm-12 hover">
+															<thead>
+															</thead>
+															<tbody>
+															</tbody>
+														</table>
+
+													</div>
+												</div>
+											</div>
 										</div>
 									</div>
 								</div>
@@ -206,19 +213,15 @@
 				<form id="add_question_form" class="row g-3">
 					<div class="col-md-12" bis_skin_checked="1">
 						<label for="pregunta" class="form-label">Pregunta</label>
-						<input name="pregunta" type="text" class="form-control">
+						<input name="pregunta" id="pregunta" type="text" class="form-control">
 					</div>
 					<div class="col-md-12 d-flex justify-content-between align-self-center">
 						<label  class="form-label">Respuestas</label>
 						<button type="button" onclick="addRespuesta()" class="btn btn-primary">Agregar</button>
 					</div>
-
 					<hr>
-
 					<div id="divRespuestas">
-
 					</div>
-					
 				</form>
 			</div>
 			<div class="modal-footer" bis_skin_checked="1">

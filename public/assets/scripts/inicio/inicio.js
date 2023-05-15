@@ -58,25 +58,9 @@ $('#productos-table').DataTable({
 
 });
 
-$('#variacion-table').DataTable({
+var tablaPreguntas = $('#tablaPreguntas').DataTable({
     "initComplete": function(settings, json) {
 
-        $("#variacion-table").on('change',"input[type='checkbox']",function(e){
-
-            const state = $(this).is(":checked");
-            let state_text = "";
-
-            if(state){
-                state_text = "true";
-            }else{
-                state_text = "false";
-            }
-
-            const tr = $(this).closest("tr");
-            const data = $("#variacion-table").DataTable().row(tr).data();
-            updateState("variaciones", data.id, state_text);
-
-        });
     },
     "oLanguage": {
             "sUrl": "../../../public/assets/datatable/spanish-datatable.json"
@@ -84,16 +68,18 @@ $('#variacion-table').DataTable({
     dom: 'lrt',
     columns: [
 
-        { data: 'descripcion', title: 'Descripción'},
-        { data: 'code', title: 'Referecia'},
-        { data: 'precio_extra', title: 'Precio extra', orderable: false, width: '80px'  },
-        { data: 'estado_checkbox', title: 'Disponibilidad', orderable: false, width: '110px'},
-        { title: 'Opciones', class: 'details-control', orderable: false, data: null, defaultContent: action_iconsNV, width: '50px' }
+        { data: 'id', title: 'Orden', width: '10%', orderable: false},
+        { data: 'pregunta', title: 'Pregunta', orderable: false, width: '50%'  },
+        { data: 'cant_resp', title: 'Respuestas', orderable: false, width: '20%'},
+        { data: 'opciones', title: 'Opciones', class: 'details-control', orderable: false, defaultContent: action_iconsNV, width: '20%' }
 
     ],
     autoWidth: false,
     info: false,
     paging: false,
+    /*rowReorder: {
+        selector: 'tr'
+      },*/
     targets: 'no-sort',
     bSort: true,
     order: [[ 0, 'asc' ]],
@@ -103,7 +89,6 @@ $('#variacion-table').DataTable({
 
 	
 $('#settings').on('shown.bs.modal', async function () {
-		console.log('modal abierto');
 
         const getSettings = await asyncGetAjax('/load_settings');
 
@@ -113,8 +98,6 @@ $('#settings').on('shown.bs.modal', async function () {
         $('#botNumber').val(botNumber);
         $('#secondaryNumber').val(secondaryNumber);
         $('#email').val(email);
-
-        console.log(await asyncGetAjax('/load_settings'));
 
 });
 
@@ -140,7 +123,6 @@ $('#settings_form').submit( async function(event) {
 
 
   $('#basic_messages').on('shown.bs.modal', async function () {
-    console.log('modal abierto');
 
     const getBasics = await asyncGetAjax('/load_basics');
 
@@ -149,8 +131,6 @@ $('#settings_form').submit( async function(event) {
     $('#firstMessage').val(firstMessage);
     $('#lastMessage').val(lastMessage);
     $('#wrongAnswer').val(wrongAnswer);
-
-    console.log(await asyncGetAjax('/load_basics'));
 
 });
 
@@ -179,18 +159,73 @@ $('#add_question_form').submit( async function(event) {
     const $form = $("#add_question_form");
     const data = getFormData($form);
 
-    console.log({data});
-
     const postBasics = await asyncPostAjax('/upload_question', data );
 
     if( postBasics.state = 'success' ){
 
         $('#add_question').modal('toggle');
+        $('#divRespuestas').html('');
+        $('#pregunta').val('');
+        resetTablaPreguntas();
 
     }
 
     showNotification(postBasics.state,  postBasics.message);
 });
+
+
+$('#divRespuestas').on('click' , ".rspIG.input-group-text" ,  function() {
+
+    var padreDirecto = $(this).parent();
+
+    padreDirecto.remove();
+
+    var divContenedor = $('#divRespuestas');
+
+    // Obtener todos los elementos de entrada (input group) dentro del div
+    var inputs = divContenedor.find('.input-group-text');
+
+    // Recorrer cada elemento y asignar el texto con su respectivo número
+    inputs.each(function(index) {
+        var numero = index + 1;
+        $(this).text(numero);
+        $( this ).parent().find('input').attr('name', `respuesta-${numero}`);
+    });
+
+
+});
+
+
+$( document ).ready(async function() {
+
+    resetTablaPreguntas();
+
+    $('#tablaPreguntas tbody').on('click', 'tr', function() {
+
+        // Obtiene los datos de la fila clickeada
+        var datosFila = tablaPreguntas.row(this).data();
+        
+        // Hacer algo con los datos obtenidos
+        console.log({datosFila});
+    });
+    
+});
+
+
+function getFormData($form) {
+
+    var unindexed_array = $form.serializeArray();
+    var indexed_array = {};
+
+    $.map(unindexed_array, function (n, i) {
+
+        indexed_array[n['name']] = n['value'];
+
+    });
+
+    return indexed_array;
+
+}
 
 
 function addRespuesta(){
@@ -213,67 +248,28 @@ function addRespuesta(){
 
     }
 
-
-    console.log($('#divRespuestas').find('.input-group-text'));
-
-    
 }
 
 
-    $('#divRespuestas').on('click' , ".rspIG.input-group-text" ,  function() {
-    
-        var padreDirecto = $(this).parent();
+async function resetTablaPreguntas(){
 
-        padreDirecto.remove();
-    
-        console.log(padreDirecto);
+    tablaPreguntas.clear().draw()
 
-        var divContenedor = $('#divRespuestas');
+    const {res} = await asyncGetAjax('/load_questions');
 
-        // Obtener todos los elementos de entrada (input group) dentro del div
-        var inputs = divContenedor.find('.input-group-text');
+    const datosTabla = [];
 
-        console.log(inputs);
+    res.forEach(element => {
 
-        // Recorrer cada elemento y asignar el texto con su respectivo número
-        inputs.each(function(index) {
-            var numero = index + 1;
-            $(this).text(numero);
-            $( this ).parent().find('input').attr('name', `respuesta-${numero}`);
-        });
-    
-    
+        let cant_resp = element.respuestas.split(',').length;
+
+        element.cant_resp = cant_resp;
+
+        datosTabla.push(element);
     });
 
-
-
-$(document).ready(async function() {
-   
-    
-
-
-
-
-});
-
-
-
-function getFormData($form) {
-
-    var unindexed_array = $form.serializeArray();
-    var indexed_array = {};
-
-    $.map(unindexed_array, function (n, i) {
-
-        indexed_array[n['name']] = n['value'];
-
-    });
-
-    return indexed_array;
-
+    tablaPreguntas.rows.add(datosTabla).draw();  
 }
-
-
 
 
 

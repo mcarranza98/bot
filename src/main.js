@@ -248,11 +248,11 @@ const createMainWindow = async (app) => {
         },
         useContentSize: true,
         show: false,
-        icon: path.resolve(__dirname, '..', 'public', 'assets' , 'images' , 'icons' , 'tecsomlogowhite.ico')
+        icon: path.resolve(__dirname, '..', 'public', 'assets' , 'images' , 'indix' , 'Indix-bold.ico')
 
     });
 
-    console.log(path.resolve(__dirname, '..', 'public', 'assets' , 'images' , 'icons' , 'tecsomlogowhite.ico'));
+    console.log(path.resolve(__dirname, '..', 'public', 'assets' , 'images' , 'indix' , 'Indix-bold.ico'));
 
     window.maximize();
 
