@@ -9,7 +9,7 @@ const settings_iconNP = `<div class="d-flex order-actions" bis_skin_checked="1">
 
 const action_iconsNV = `<div class="d-flex order-actions" bis_skin_checked="1">	
                     <a href="javascript:;"  data-bs-toggle="modal" data-bs-target="#mod_question"><i class="bx bx-edit"></i></a>
-                    <a href="javascript:;"  data-bs-toggle="modal" data-bs-target="#eliminar_variacion"class="ms-4"><i class="bx bx-trash"></i></a>
+                    <a href="javascript:;"  data-bs-toggle="modal" data-bs-target="#delete_question"class="ms-4"><i class="bx bx-trash"></i></a>
                     </div>`;
 
 
@@ -181,8 +181,6 @@ $('#mod_question_form').submit( async function(event) {
 
     data.id = $('#mod_question').data('id');
 
-    console.log(data);
-
     const postBasics = await asyncPostAjax('/update_question', data );
 
     if( postBasics.state = 'success' ){
@@ -256,28 +254,51 @@ $( document ).ready(async function() {
 
         $('#mod_question').data({id: id});
 
+        $('#divModRespuestas').html('');
+
         let contResp = 0;
         for (var [key, value] of Object.entries(respuestasArray)) {
 
-            contResp++;
+        contResp++;
 
-            let plantillaRespuesta = `
-                <div class="rspIGr input-group mb-3">
-                    <span class="rspIGr input-group-text" id="respuesta-${contResp}">${contResp}</span>
-                    <input type="text" class="form-control" id="Inrespuesta-${contResp}" placeholder="Respuesta" name="respuesta-${contResp}">
-                </div>`;
+        let plantillaRespuesta = `
+            <div class="rspIGr input-group mb-3">
+                <span class="rspIGr input-group-text" id="respuesta-${contResp}">${contResp}</span>
+                <input type="text" class="form-control" id="Inrespuesta-${contResp}" placeholder="Respuesta" name="respuesta-${contResp}">
+            </div>`;
 
-                $('#divModRespuestas').append(plantillaRespuesta);
-                
-                $(`#Inrespuesta-${contResp}`).val(value);
+            $('#divModRespuestas').append(plantillaRespuesta);
+            
+            $(`#Inrespuesta-${contResp}`).val(value);
 
-            }
+        }
+
+
+        $('#delete_question').data({id: id});
+
 
 
     });
     
 });
 
+
+$('#delQuest').click(async function() {
+
+    const { id } = $('#delete_question').data();
+
+    const postSettings = await asyncPostAjax('/delete_question', {id} );
+
+    if( postSettings.state = 'success' ){
+
+        $('#delete_question').modal('toggle');
+        resetTablaPreguntas()
+
+    }
+    showNotification(postSettings.state,  postSettings.message);
+
+
+});
 
 $('#add_question').on('hidden.bs.modal', function () {
     $('#divRespuestas').html('');

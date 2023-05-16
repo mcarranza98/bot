@@ -235,10 +235,6 @@ router.post('/upload_question', function(req, res, next) {
 
   let cant_respuestas = Object.keys(respuestas).length;
 
-  console.log({respuestas});
-  console.log({pregunta});
-  console.log({cant_respuestas});
-
   const db = new Database(path.join(__dirname, '..' , 'database' , 'questions.db'));
 
 
@@ -283,10 +279,6 @@ router.post('/update_question', function(req, res, next) {
   let cant_respuestas = Object.keys(respuestas).length;
 
   respuestas = JSON.stringify(respuestas);
-  console.log({respuestas});
-  console.log({pregunta});
-  console.log({cant_respuestas});
-  console.log({id});
 
   const db = new Database(path.join(__dirname, '..' , 'database' , 'questions.db'));
   
@@ -305,6 +297,35 @@ router.post('/update_question', function(req, res, next) {
   db.close();
 
   
+});
+
+
+router.post('/delete_question', function(req, res, next) {
+
+  const{ id } = req.body;
+
+  const db = new Database(path.join(__dirname, '..' , 'database' , 'questions.db'));
+
+  db.transaction(() => {
+    // Obtener el orden del registro a eliminar
+    const registroAEliminar = db.prepare('SELECT id FROM questions WHERE id = ?').get(id);
+    const idAEliminar = registroAEliminar.id;
+
+    // Eliminar el registro
+    db.prepare('DELETE FROM questions WHERE id = ?').run(id);
+
+    // Actualizar el id de los registros restantes
+    db.prepare('UPDATE questions SET id = id - 1 WHERE id > ?').run(idAEliminar);
+
+    res.send({state: "success" , message : "Pregunta eliminada exitosamente."});
+
+    
+  })().catch((err) => {
+    res.send({state: "error" , message : err});
+  });
+
+
+  db.close();
 });
 
 
