@@ -159,16 +159,19 @@ $('#add_question_form').submit( async function(event) {
     const $form = $("#add_question_form");
     const data = getFormData($form);
 
-    const postBasics = await asyncPostAjax('/upload_question', data );
+    if( validarFormulario('add_question_form') && verificarCantidadInputs('add_question_form') ){
 
-    if( postBasics.state = 'success' ){
+        const postBasics = await asyncPostAjax('/upload_question', data );
 
-        $('#add_question').modal('toggle');
-        resetTablaPreguntas();
+        if( postBasics.state = 'success' ){
 
+            $('#add_question').modal('toggle');
+            resetTablaPreguntas();
+
+        }
+
+        showNotification(postBasics.state,  postBasics.message);
     }
-
-    showNotification(postBasics.state,  postBasics.message);
 });
 
 
@@ -342,7 +345,7 @@ function addRespuesta(){
 
     }else{
 
-        alert('El número máximo de respuestas permitidas es de 9');
+        showNotification('error',  'El número máximo de respuestas permitidas es de 9');
 
     }
 
@@ -365,7 +368,7 @@ function modRespuesta(){
 
     }else{
 
-        alert('El número máximo de respuestas permitidas es de 9');
+        showNotification('error',  'El número máximo de respuestas permitidas es de 9');
 
     }
 
@@ -445,3 +448,35 @@ async function asyncGetAjax( path ){
 
 }
 
+
+function validarFormulario(formId) {
+    var form = $('#' + formId);
+    var inputs = form.find('input');
+  
+    var camposVacios = false;
+  
+    inputs.each(function() {
+      var input = $(this);
+  
+      if (input.val() === '') {
+        input.addClass('input-error');
+        camposVacios = true;
+      } else {
+        input.removeClass('input-error');
+      }
+    });
+  
+    return !camposVacios;
+}
+
+function verificarCantidadInputs(formId) {
+    var form = document.getElementById(formId);
+    var inputs = form.getElementsByTagName('input');
+  
+    if (inputs.length < 3) {
+        showNotification('error',  'Debes de ingresar al menos dos respuesta');
+        return false;
+    } else {
+        return true;
+    }
+  }

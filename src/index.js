@@ -45,6 +45,30 @@ db_settings.prepare(initSettings).run();
 db_settings.close();
 
 
+const db_users = new Database(path.join(__dirname, '..' , 'database' , 'users.db'));
+
+const initusers = `CREATE TABLE IF NOT EXISTS users (
+                    id  TEXT NOT NULL,
+                    phone TEXT NOT NULL,
+                    step_message TEXT NOT NULL, 
+                    step_question TEXT,
+                    answers TEXT
+                    )`;
+
+db_users.prepare(initusers).run();
+
+const initFinishUSer = `CREATE TABLE IF NOT EXISTS finished (
+                    id  TEXT NOT NULL,
+                    phone TEXT NOT NULL,
+                    answers TEXT,
+                    timestamp DATETIME
+                    )`;
+
+db_users.prepare(initFinishUSer).run();
+
+db_users.close();
+
+
 
 
 

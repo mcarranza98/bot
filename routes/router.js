@@ -237,9 +237,14 @@ router.post('/upload_question', function(req, res, next) {
 
   const db = new Database(path.join(__dirname, '..' , 'database' , 'questions.db'));
 
+  const currentQuestions = db.prepare('SELECT * FROM questions');
+  const contID = currentQuestions.all();
 
-  const command = `INSERT INTO questions(pregunta, respuestas, cant_respuestas) 
-                VALUES(@pregunta, @respuestas, @cant_respuestas)`;
+  console.log(contID);
+
+
+  const command = `INSERT INTO questions(id, pregunta, respuestas, cant_respuestas) 
+                VALUES(@id, @pregunta, @respuestas, @cant_respuestas)`;
                           
   const insert = db.prepare(command);
   
@@ -252,6 +257,7 @@ router.post('/upload_question', function(req, res, next) {
   });
 
   const question = {
+      id:contID.length + 1,
       pregunta: pregunta,
       respuestas: JSON.stringify(respuestas),
       cant_respuestas : cant_respuestas
@@ -306,23 +312,26 @@ router.post('/delete_question', function(req, res, next) {
 
   const db = new Database(path.join(__dirname, '..' , 'database' , 'questions.db'));
 
-  db.transaction(() => {
-    // Obtener el orden del registro a eliminar
-    const registroAEliminar = db.prepare('SELECT id FROM questions WHERE id = ?').get(id);
-    const idAEliminar = registroAEliminar.id;
+  try{
+    db.transaction(() => {
+      // Obtener el orden del registro a eliminar
+      const registroAEliminar = db.prepare('SELECT id FROM questions WHERE id = ?').get(id);
+      const idAEliminar = registroAEliminar.id;
 
-    // Eliminar el registro
-    db.prepare('DELETE FROM questions WHERE id = ?').run(id);
+      // Eliminar el registro
+      db.prepare('DELETE FROM questions WHERE id = ?').run(id);
 
-    // Actualizar el id de los registros restantes
-    db.prepare('UPDATE questions SET id = id - 1 WHERE id > ?').run(idAEliminar);
+      // Actualizar el id de los registros restantes
+      db.prepare('UPDATE questions SET id = id - 1 WHERE id > ?').run(idAEliminar);
 
-    res.send({state: "success" , message : "Pregunta eliminada exitosamente."});
+      res.send({state: "success" , message : "Pregunta eliminada exitosamente."});
 
-    
-  })().catch((err) => {
+      
+    })()
+  
+  } catch(err) {
     res.send({state: "error" , message : err});
-  });
+  };
 
 
   db.close();
