@@ -184,16 +184,19 @@ $('#mod_question_form').submit( async function(event) {
 
     data.id = $('#mod_question').data('id');
 
-    const postBasics = await asyncPostAjax('/update_question', data );
+    if( validarFormulario('mod_question_form') && verificarCantidadInputs('mod_question_form') ){
 
-    if( postBasics.state = 'success' ){
+        const postBasics = await asyncPostAjax('/update_question', data );
 
-        $('#mod_question').modal('toggle');
-        resetTablaPreguntas();
+        if( postBasics.state = 'success' ){
 
+            $('#mod_question').modal('toggle');
+            resetTablaPreguntas();
+
+        }
+
+        showNotification(postBasics.state,  postBasics.message);
     }
-
-    showNotification(postBasics.state,  postBasics.message);
 });
 
 
