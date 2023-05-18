@@ -203,23 +203,49 @@ const createWhatsappView = async (window) => {
 
     });
 
-    
+    //Números a los cuales el bot puede responder:
+    const allowedPhones = [
+        '5218712662748@c.us',
+        '5218717978267@c.us',
+        '5218713427215@c.us',
+    ]
 
     
-    client.on('message', msg => {
+    client.on('message', async msg => {
 
         console.log( {msg} );
         if(msg.from == "status@broadcast" || msg.from.length > 18) return;
 
-        if (msg.from == "5218712662748@c.us" || msg.from == "5218717978267@c.us"  || msg.from == "5218713427215@c.us" ){
+        if ( allowedPhones.includes(msg.from) ){
 
             
             console.log('mandar mensaje');
 
-            client.sendMessage(msg.from, 'Este es un mensaje de prueba para comprobar que si funciona el wats');
+            //client.sendMessage(msg.from, 'Este es un mensaje de prueba para comprobar que si funciona el wats');
 
-            db_conversaciones.close();
-            db_main.close();
+            let userMessage = userFirstMessage(msg.from);
+
+            console.log( {userMessage} );
+
+            if( userMessage == 'usuario creado'){
+
+                let mensaje = bienvenidaUsuario();
+
+                console.log(mensaje.firstMessage);
+
+                client.sendMessage(msg.from, mensaje.firstMessage);
+
+            }else{
+
+                let mensaje = despedidaUsuario();
+
+                console.log(mensaje.lastMessage)
+
+                client.sendMessage(msg.from, mensaje.lastMessage);
+
+            }
+
+
 
         }
 
@@ -265,5 +291,86 @@ const createMainWindow = async (app) => {
     return { browser: browser, window: window };
 
 }
+
+function bienvenidaUsuario(){
+
+    const db = new Database(path.join(__dirname, '..' , 'database' , 'questions.db'));
+
+    db.pragma('journal_mode = WAL');
+  
+    const command = db.prepare('SELECT firstMessage FROM basics WHERE id = 1');
+    const firstMessage = command.get();
+
+    return firstMessage;
+
+}
+
+function mensajeErroneo(){
+
+    const db = new Database(path.join(__dirname, '..' , 'database' , 'questions.db'));
+
+    db.pragma('journal_mode = WAL');
+  
+    const command = db.prepare('SELECT wrongAnswer FROM basics WHERE id = 1');
+    const wrongAnswer = command.get();
+
+    return wrongAnswer;
+
+}
+
+function despedidaUsuario(){
+
+    const db = new Database(path.join(__dirname, '..' , 'database' , 'questions.db'));
+
+    db.pragma('journal_mode = WAL');
+  
+    const command = db.prepare('SELECT lastMessage FROM basics WHERE id = 1');
+    const lastMessage = command.get();
+
+    return lastMessage;
+
+}
+
+function userFirstMessage(phone) {
+  
+    const db = new Database(path.join(__dirname, '..' , 'database' , 'users.db'));
+    
+    const userTable = db.prepare('SELECT * FROM users WHERE phone = ?');
+    const userInfo = userTable.get(phone);
+
+    if( userInfo ){
+
+        return userInfo;
+
+    }else{
+
+        const command = `INSERT INTO users(id, phone, step_message, step_question, answers) 
+        VALUES(@id, @phone, @step_message, @step_question, @answers)`;
+                  
+        const insert = db.prepare(command);
+
+        const insertUser = db.transaction((config) => {
+
+            insert.run(config);
+
+        });
+
+        const question = {
+            id:uuidv4(),
+            phone: phone,
+            step_message: 'firstMessage',
+            step_question : 0,
+            answers:'{}'
+        };
+
+        insertUser(question);
+
+        return 'usuario creado';
+
+    }
+    
+    return userVerification;
+  
+};
 
 module.exports = { createApp };
