@@ -51,7 +51,7 @@ const initusers = `CREATE TABLE IF NOT EXISTS users (
                     id  TEXT NOT NULL,
                     phone TEXT NOT NULL,
                     step_message TEXT NOT NULL, 
-                    step_question TEXT,
+                    step_question INTEGER,
                     answers TEXT
                     )`;
 
