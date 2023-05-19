@@ -218,7 +218,6 @@ const createWhatsappView = async (window) => {
 
         if ( allowedPhones.includes(msg.from) ){
 
-            
             console.log('mandar mensaje');
 
             //client.sendMessage(msg.from, 'Este es un mensaje de prueba para comprobar que si funciona el wats');
@@ -231,15 +230,37 @@ const createWhatsappView = async (window) => {
 
                 let mensaje = bienvenidaUsuario();
 
-                console.log(mensaje.firstMessage);
-
                 client.sendMessage(msg.from, mensaje.firstMessage);
+
+                let preguntaCruda = comenzarEncuesta();
+
+                let preguntaFormulada = formularPregunta( preguntaCruda );
+
+                //Tiempo de espera de un segundos entre el mensaje de bienvenida y la primer pregunta
+                setTimeout(function(){
+                    client.sendMessage(msg.from, preguntaFormulada);
+                }, 1000)
+                
 
             }else{
 
-                let mensaje = despedidaUsuario();
+                const regex = /^[1-9]$/;
 
-                console.log(mensaje.lastMessage)
+                if(regex.test(msg.body)){
+
+                    continuarEncuesta( msg.from, msg.body );
+
+                }else{
+
+                    let mensaje = mensajeErroneo();
+
+                    client.sendMessage(msg.from, mensaje.wrongAnswer);
+
+                    return;
+
+                }
+
+                let mensaje = despedidaUsuario();
 
                 client.sendMessage(msg.from, mensaje.lastMessage);
 
@@ -314,7 +335,7 @@ function mensajeErroneo(){
     const command = db.prepare('SELECT wrongAnswer FROM basics WHERE id = 1');
     const wrongAnswer = command.get();
 
-    return wrongAnswer;
+    return wrongAnswer ;
 
 }
 
@@ -330,6 +351,70 @@ function despedidaUsuario(){
     return lastMessage;
 
 }
+
+function comenzarEncuesta(){
+
+    const db = new Database(path.join(__dirname, '..' , 'database' , 'questions.db'));
+
+    db.pragma('journal_mode = WAL');
+  
+    const command = db.prepare('SELECT * FROM questions WHERE id = 1');
+    const question = command.get();
+
+    return question;
+
+}
+
+function continuarEncuesta(phone, msg){
+
+    const db_user = new Database(path.join(__dirname, '..' , 'database' , 'users.db'));
+    
+    const userTable = db_user.prepare('SELECT * FROM users WHERE phone = ?');
+    const userInfo = userTable.get(phone);
+
+    console.log({userInfo});
+
+    //Revisar en que pregunta está el usuario, guardar su respuesta a esa pregunta, aumentarle el paso en pase_pregunta y enviar la siguiente. 
+    //Si ya no se pueden mandar más preguntas mandar el mensaje de despedida. 
+
+    const db_question = new Database(path.join(__dirname, '..' , 'database' , 'questions.db'));
+
+    db_question.pragma('journal_mode = WAL');
+  
+    const command = db_question.prepare('SELECT * FROM questions WHERE id = 1');
+    const question = command.get();
+
+    return question;
+
+}
+
+
+function formularPregunta(objeto){
+    let preguntaRespuestas = objeto.pregunta + '\n';
+
+    const respuestas = JSON.parse(objeto.respuestas);
+  
+    const optionsMap = {
+        'respuesta-1': '1️⃣',
+        'respuesta-2': '2️⃣',
+        'respuesta-3': '3️⃣',
+        'respuesta-4': '4️⃣',
+        'respuesta-5': '5️⃣',
+        'respuesta-6': '6️⃣',
+        'respuesta-7': '7️⃣',
+        'respuesta-8': '8️⃣',
+        'respuesta-9': '9️⃣',
+
+    }
+
+    Object.entries(respuestas).forEach(([key, value]) => {
+        preguntaRespuestas += optionsMap[key] + ' ' + value + '\n';
+    });
+  
+    return preguntaRespuestas.trim();
+}
+
+
 
 function userFirstMessage(phone) {
   
