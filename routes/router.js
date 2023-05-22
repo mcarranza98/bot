@@ -113,8 +113,7 @@ router.post('/upload_settings', function(req, res, next) {
 
   const db = new Database(path.join(__dirname, '..' , 'database' , 'settings.db'));
 
-  const query = db.prepare('SELECT * FROM settings');
-  const registro = query.all();
+     
 
   db.pragma('journal_mode = WAL');
  

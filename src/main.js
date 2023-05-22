@@ -11,8 +11,6 @@ const natural = require('natural');
 const { v4: uuidv4 } = require('uuid');
 const request = require("request");
 
-const {PosPrinter} = require("electron-pos-printer");
-
 const distance = require('google-distance-matrix');
 distance.key('AIzaSyDH9nP0KFFro41ufDHWLSTAHp9Rxa__ofc');
 
@@ -37,10 +35,7 @@ const createApp = async () => {
     const { client, view } = await createWhatsappView(window, browser);
 
     //const intervalID = setInterval(checkAutocompleteOrder, 5000, window, client); //corre cada 5 segundo para comprobar ordenes pendientes y autocompletarlas
-
-
-   
-
+ 
     attachView_Whatsapp(client,window,view,browser);
 
     const CHANNEL_NAME = 'main';
@@ -208,6 +203,7 @@ const createWhatsappView = async (window) => {
         '5218712662748@c.us',
         '5218717978267@c.us',
         '5218713427215@c.us',
+        '5218711675842@c.us',
     ]
 
     
@@ -248,7 +244,13 @@ const createWhatsappView = async (window) => {
 
                 if(regex.test(msg.body)){
 
-                    continuarEncuesta( msg.from, msg.body );
+                    let respuesta;
+
+                    let respuestaNumerica = continuarEncuesta( msg.from, msg.body );
+
+                    respuesta = respuestaNumerica.error ?? formularPregunta(respuestaNumerica.sigPregunta);  
+
+                    client.sendMessage(msg.from, respuesta);
 
                 }else{
 
@@ -260,9 +262,9 @@ const createWhatsappView = async (window) => {
 
                 }
 
-                let mensaje = despedidaUsuario();
+                //let mensaje = despedidaUsuario();
 
-                client.sendMessage(msg.from, mensaje.lastMessage);
+                //client.sendMessage(msg.from, mensaje.lastMessage);
 
             }
 
@@ -374,6 +376,8 @@ function continuarEncuesta(phone, msg){
 
     console.log({userInfo});
 
+    let stepActual = userInfo.step_question + 1;
+
     //Revisar en que pregunta está el usuario, guardar su respuesta a esa pregunta, aumentarle el paso en pase_pregunta y enviar la siguiente. 
     //Si ya no se pueden mandar más preguntas mandar el mensaje de despedida. 
 
@@ -381,15 +385,74 @@ function continuarEncuesta(phone, msg){
 
     db_question.pragma('journal_mode = WAL');
   
-    const command = db_question.prepare('SELECT * FROM questions WHERE id = 1');
-    const question = command.get();
+    const queryPregunta = db_question.prepare('SELECT * FROM questions WHERE id =  ?');
+    const question = queryPregunta.get( stepActual );
 
-    return question;
+    if( msg <= question.cant_respuestas ){
+
+        if( !isUltimaPregunta( stepActual ) ){
+
+            console.log({question});
+
+                let newQuestionStep = userInfo.step_question + 1;
+        
+                const queryUser = db_user.prepare(`UPDATE users
+                                                        SET step_message = ?,
+                                                            step_question = ?,
+                                                            answers = ?
+
+                                                        WHERE
+                                                            phone = ? `);
+                
+                queryUser.run( 'questions' , newQuestionStep , '{resp}' , phone  );
+
+                const sigPregunta = queryPregunta.get(newQuestionStep + 1);
+
+                console.log({sigPregunta});
+
+                return {sigPregunta};
+
+            
+
+        }else{
+
+            let despedida = despedidaUsuario();
+            return {error: despedida.lastMessage};
+        
+        }
+
+    }else{
+        return {error: 'Esa respuesta no era una opción'};
+    }
 
 }
 
 
+function isUltimaPregunta(PreguntaActual){
+
+    console.log('******************');
+    console.log({PreguntaActual});
+    
+
+    const db = new Database(path.join(__dirname, '..' , 'database' , 'questions.db'));
+
+    db.pragma('journal_mode = WAL');
+
+    const queryCont = db.prepare('SELECT * FROM questions');
+    const contQuery = queryCont.all();
+    console.log({cantPreguntas: contQuery.length})
+    let isUltima = PreguntaActual < contQuery.length ? false : true;
+
+
+    console.log({isUltima})
+    return isUltima;
+}
+
+
 function formularPregunta(objeto){
+
+    console.log({objeto});
+
     let preguntaRespuestas = objeto.pregunta + '\n';
 
     const respuestas = JSON.parse(objeto.respuestas);
