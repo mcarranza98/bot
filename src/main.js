@@ -147,7 +147,7 @@ const createWhatsappView = async (window) => {
         const initialMessages = `INSERT INTO basics (id, firstMessage, lastMessage, wrongAnswer)
                     VALUES (
                         1,
-                        '¡Hola! Gracias por comunicarte conmigo.', 
+                        '¡Hola! Gracias por comunicarte conmigo. \nMe gustaría que te tomarás un momento de responder las siguientes preguntas. 😃', 
                         'Gracias por tomarte el tiempo de responder, pronto recibirás noticias!', 
                         'Lo lamento, no comprendí tu respuesta, podrías reenviarla por favor.')`;
 
@@ -209,18 +209,18 @@ const createWhatsappView = async (window) => {
     
     client.on('message', async msg => {
 
-        console.log( {msg} );
         if(msg.from == "status@broadcast" || msg.from.length > 18) return;
 
         if ( allowedPhones.includes(msg.from) ){
 
-            console.log('mandar mensaje');
-
-            //client.sendMessage(msg.from, 'Este es un mensaje de prueba para comprobar que si funciona el wats');
+            if( msg.body == 'RESET' ){
+                
+                eliminarNumero( msg.from )
+            
+            }
 
             let userMessage = userFirstMessage(msg.from);
 
-            console.log( {userMessage} );
 
             if( userMessage == 'usuario creado'){
 
@@ -367,6 +367,18 @@ function comenzarEncuesta(){
 
 }
 
+function eliminarNumero( phone ){
+
+    const db = new Database(path.join(__dirname, '..' , 'database' , 'users.db'));
+
+    db.pragma('journal_mode = WAL');
+  
+    const command = db.prepare('DELETE FROM users WHERE phone = ?');
+    command.run(phone);
+
+}
+
+
 function continuarEncuesta(phone, msg){
 
     const db_user = new Database(path.join(__dirname, '..' , 'database' , 'users.db'));
@@ -408,8 +420,6 @@ function continuarEncuesta(phone, msg){
 
                 const sigPregunta = queryPregunta.get(newQuestionStep + 1);
 
-                console.log({sigPregunta});
-
                 return {sigPregunta};
 
             
@@ -430,9 +440,6 @@ function continuarEncuesta(phone, msg){
 
 function isUltimaPregunta(PreguntaActual){
 
-    console.log('******************');
-    console.log({PreguntaActual});
-    
 
     const db = new Database(path.join(__dirname, '..' , 'database' , 'questions.db'));
 
@@ -440,18 +447,13 @@ function isUltimaPregunta(PreguntaActual){
 
     const queryCont = db.prepare('SELECT * FROM questions');
     const contQuery = queryCont.all();
-    console.log({cantPreguntas: contQuery.length})
     let isUltima = PreguntaActual < contQuery.length ? false : true;
 
-
-    console.log({isUltima})
     return isUltima;
 }
 
 
 function formularPregunta(objeto){
-
-    console.log({objeto});
 
     let preguntaRespuestas = objeto.pregunta + '\n';
 

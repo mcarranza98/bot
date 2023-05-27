@@ -113,16 +113,17 @@ router.post('/upload_settings', function(req, res, next) {
 
   const db = new Database(path.join(__dirname, '..' , 'database' , 'settings.db'));
 
-     
+  const countQuery = db.prepare('SELECT * FROM settings');
+  const registro = countQuery.all();
 
   db.pragma('journal_mode = WAL');
  
   if( registro.length == 0 ){
 
-      const command = `INSERT INTO settings(id, name, botNumber, secondaryNumber, email) 
+      const regQuery = `INSERT INTO settings(id, name, botNumber, secondaryNumber, email) 
                     VALUES(@id, @name, @botNumber, @secondaryNumber, @email)`;
                               
-      const insert = db.prepare(command);
+      const insert = db.prepare(regQuery);
       
       const insertSettings = db.transaction((config) => {
         
@@ -146,7 +147,7 @@ router.post('/upload_settings', function(req, res, next) {
 
   }else{
 
-    command = db.prepare(`UPDATE settings
+    updQuery = db.prepare(`UPDATE settings
                                           SET id = 1,
                                               name = ?,
                                               botNumber = ?,
@@ -156,7 +157,7 @@ router.post('/upload_settings', function(req, res, next) {
                                           WHERE
                                               id = 1 `);
     
-    command.run( name , botNumber, secondaryNumber , email  );
+    updQuery.run( name , botNumber, secondaryNumber , email  );
 
     res.send({state: "success" , message : "Configuración actualizada exitosamente."});
 
@@ -242,8 +243,8 @@ router.post('/upload_question', function(req, res, next) {
   console.log(contID);
 
 
-  const command = `INSERT INTO questions(id, pregunta, respuestas, cant_respuestas) 
-                VALUES(@id, @pregunta, @respuestas, @cant_respuestas)`;
+  const command = `INSERT INTO questions(id, uuid, pregunta, respuestas, cant_respuestas) 
+                VALUES(@id, @uuid, @pregunta, @respuestas, @cant_respuestas)`;
                           
   const insert = db.prepare(command);
   
@@ -257,6 +258,7 @@ router.post('/upload_question', function(req, res, next) {
 
   const question = {
       id:contID.length + 1,
+      uuid: uuidv4(),
       pregunta: pregunta,
       respuestas: JSON.stringify(respuestas),
       cant_respuestas : cant_respuestas

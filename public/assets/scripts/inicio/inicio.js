@@ -159,6 +159,9 @@ $('#add_question_form').submit( async function(event) {
     const $form = $("#add_question_form");
     const data = getFormData($form);
 
+
+    console.log(data);
+
     if( validarFormulario('add_question_form') && verificarCantidadInputs('add_question_form') ){
 
         const postBasics = await asyncPostAjax('/upload_question', data );
@@ -323,7 +326,7 @@ function getFormData($form) {
 
     $.map(unindexed_array, function (n, i) {
 
-        indexed_array[n['name']] = n['value'];
+        indexed_array[n['name']] = n['value'].trim();
 
     });
 

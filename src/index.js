@@ -2,9 +2,16 @@ const { createApp } = require('./main');
 const sqlite3 = require('sqlite3').verbose();
 const path = require('path');
 const Database = require('better-sqlite3');
+const fs = require('fs');
+
 
 createApp();
 
+const dir = path.resolve(__dirname, '..', 'database');
+
+if (!fs.existsSync(dir)) {
+    fs.mkdirSync(dir);
+}
 
 /*SETUP DATABASE */
 
@@ -20,7 +27,8 @@ const initOrders = `CREATE TABLE IF NOT EXISTS basics (
 db_main.prepare(initOrders).run();
 
 const initQuestions = `CREATE TABLE IF NOT EXISTS questions (
-                    id INTEGER PRIMARY KEY AUTOINCREMENT, 
+                    id INTEGER NOT NULL PRIMARY KEY,
+                    uuid TEXT NOT NULL,
                     pregunta TEXT NOT NULL, 
                     respuestas TEXT NOT NULL,
                     cant_respuestas INTEGER NOT NULL
