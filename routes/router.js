@@ -5,7 +5,6 @@ const path = require('path');
 const { v4: uuidv4 } = require('uuid');
 
 const Database = require('better-sqlite3');
-const NodeGeocoder = require('node-geocoder');
 
 
 /* GET the home page. */

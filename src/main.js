@@ -1,7 +1,7 @@
 const { app, BrowserWindow, BrowserView, session, ipcMain, dialog, webContents } = require('electron');
 const puppeteer = require('puppeteer-core');
 const pie = require('puppeteer-in-electron');
-const { Client, LocalAuth, MessageMedia } = require('tecsom-whatsapp-web.js');
+const { Client, LocalAuth  } = require('whatsapp-web.js');
 const path = require('path');
 //const sqlite3 = require('sqlite3').verbose();
 const server = require('../app');
@@ -11,13 +11,7 @@ const natural = require('natural');
 const { v4: uuidv4 } = require('uuid');
 const request = require("request");
 
-const distance = require('google-distance-matrix');
-distance.key('AIzaSyDH9nP0KFFro41ufDHWLSTAHp9Rxa__ofc');
-
-const NodeGeocoder = require('node-geocoder');
-
 const minutes4reset = 120 
-const CryptoJS = require('crypto-js');
 const { start } = require('repl');
 const { contextIsolated } = require('process');
 var admitedUser = true
@@ -163,6 +157,7 @@ const createWhatsappView = async (window) => {
     const client = new Client({
         authStrategy: new LocalAuth()
     });
+     
     
     
     client.on('ready', () => { 

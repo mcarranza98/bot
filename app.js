@@ -3,7 +3,6 @@ const path = require('path');
 const bodyParser = require('body-parser');
 const router = require('./routes/router');
 const expressLayouts = require('express-ejs-layouts');
-var locationPicker = require("location-picker");
 
 
 const app = express()
