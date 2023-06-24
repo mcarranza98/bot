@@ -34,21 +34,6 @@ const createApp = async () => {
 
     const CHANNEL_NAME = 'main';
 
-    ipcMain.on('PRINT_CHANNEL', (event, data) => {
-
-        const db_order = new Database(path.resolve(__dirname, '..', 'database' , 'orders.db'));
-        let command = db_order.prepare('SELECT * FROM orders WHERE telefono = ? AND timestamp = ?' );
-        const orders = command.all(data.telefono, data.timestamp);
-
-        let comando2 = db_order.prepare('SELECT * FROM order_data WHERE telefono = ? AND timestamp = ?' );
-        const order_data = comando2.get(data.telefono, data.timestamp);
-
-        const db_setings = new Database(path.resolve(__dirname,'..','database' , 'settings.db'));
-
-        printOrder(order_data, orders, db_setings)
-
-    });
-
     // COMMENT TEST
     app.on('resize', function(e,x,y){
 
@@ -89,7 +74,6 @@ function isClientConnected(client){
 function attachView_Whatsapp(client,window){
 
     ipcMain.removeAllListeners(["main"]);
-    ipcMain.removeAllListeners(["SEND_WHA"]);
     ipcMain.removeAllListeners(["RELOAD_WHATSAPP"]);
 
     ipcMain.on('RELOAD_WHATSAPP', async (event, data) => {
@@ -113,14 +97,6 @@ function attachView_Whatsapp(client,window){
         }
 
     });
-
-
-    ipcMain.on("LOAD_PRINTERS",async function(){
-
-        const printers = await window.webContents.getPrintersAsync();
-        window.webContents.send('LOAD_PRINTERS', printers);
-
-    })
 
 }
 

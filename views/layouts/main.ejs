@@ -142,21 +142,6 @@ window.addEventListener("load", (event) => {
 	
 	
 	});
-	
-	window.api.receive("WHA_HANDLE_NOTIFICATION", async (data) => { // exception on trying to access window.api.receive
-		
-		showNotification(data.status,data.message);
-	
-	});
-	
-	
-	window.api.receive("ORDER_TABLE", async (data) => { // exception on trying to access window.api.receive
-		const orders = await asyncPostAjax('/getAllOrders',{})
-		console.log(orders)
-		$('#OrdersTable').DataTable().clear().draw();
-		$('#OrdersTable').DataTable().rows.add( orders ).draw();
-	});
-
 
 	window.api.receive("W_QR_UPDATES", async (data) => { // exception on trying to access window.api.receive
 		
