@@ -1,10 +1,10 @@
 node_modules
-package-lock.json
+./package-lock.json
 database
 *.db
 *.db-shm
 *.db-wal
-Tecsom_Whatsapp-win32-x64
 windows_installer
 .wwebjs_auth
+.wwebjs_cache
 .DS_store
