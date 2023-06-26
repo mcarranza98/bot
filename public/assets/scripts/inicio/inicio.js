@@ -402,16 +402,6 @@ async function resetTablaPreguntas(){
 }
 
 
-
-
-async function getOrderData(tel, timestamp){
-    const FullOrder = await asyncPostAjax('/fullorder',{tel,timestamp});
-    return FullOrder;
-}
-
-
-
-
 async function asyncPostAjax( path, data, ){
 
     return await $.ajax({

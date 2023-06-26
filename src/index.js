@@ -17,14 +17,14 @@ if (!fs.existsSync(dir)) {
 
 const db_main = new Database(path.join(__dirname, '..' , 'database' , 'questions.db'));
 
-const initOrders = `CREATE TABLE IF NOT EXISTS basics (
+const initBasics = `CREATE TABLE IF NOT EXISTS basics (
                     id  BIT NOT NULL,
                     firstMessage TEXT NOT NULL, 
                     lastMessage TEXT NOT NULL, 
                     wrongAnswer TEXT NOT NULL
                     )`;
 
-db_main.prepare(initOrders).run();
+db_main.prepare(initBasics).run();
 
 const initQuestions = `CREATE TABLE IF NOT EXISTS questions (
                     id INTEGER NOT NULL PRIMARY KEY,

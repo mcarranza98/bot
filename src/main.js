@@ -108,11 +108,11 @@ const createWhatsappView = async (window) => {
 
     const db_questions = new Database(path.resolve(__dirname, '..', 'database' , 'questions.db'));
     let command = db_questions.prepare('SELECT * FROM basics' );
-    const orders = command.all();
+    const basics = command.all();
 
-    console.log({orders:orders.length});
+    console.log({basics:basics.length});
 
-    if( orders.length == 0 ){
+    if( basics.length == 0 ){
 
         const initialMessages = `INSERT INTO basics (id, firstMessage, lastMessage, wrongAnswer)
                     VALUES (
